@@ -4,5 +4,7 @@ go 1.18
 use (
 	./indexer
 	./proxyd
+	./sav-scrapy
+	./sav-rule
 )
 

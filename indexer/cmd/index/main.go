@@ -8,8 +8,8 @@ import (
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/urfave/cli"
 
+	"github.com/savour-labs/fieryeyes/indexer"
 	"github.com/savour-labs/fieryeyes/indexer/flags"
-	"github.com/savour-labs/fieryeyes/indexer/indexer"
 )
 
 var (
