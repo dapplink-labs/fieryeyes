@@ -1,8 +1,8 @@
 package flags
 
 import (
-	"time"
 	"github.com/urfave/cli"
+	"time"
 )
 
 const envVarPrefix = "INDEXER_"
@@ -117,16 +117,16 @@ var (
 		EnvVar: prefixEnvVar("MAX_HEADER_BATCH_SIZE"),
 	}
 	RPCHostnameFlag = cli.StringFlag{
-		Name:   "rest-hostname",
-		Usage:  "The hostname of the REST server",
+		Name:   "RPC-hostname",
+		Usage:  "The hostname of the RPC server",
 		Value:  "127.0.0.1",
-		EnvVar: prefixEnvVar("REST_HOSTNAME"),
+		EnvVar: prefixEnvVar("RPC_HOSTNAME"),
 	}
 	RPCPortFlag = cli.Uint64Flag{
-		Name:   "rest-port",
-		Usage:  "The port of the REST server",
+		Name:   "RPC-port",
+		Usage:  "The port of the RPC server",
 		Value:  8080,
-		EnvVar: prefixEnvVar("REST_PORT"),
+		EnvVar: prefixEnvVar("RPC_PORT"),
 	}
 	MetricsServerEnableFlag = cli.BoolFlag{
 		Name:   "metrics-server-enable",
@@ -152,8 +152,6 @@ var requiredFlags = []cli.Flag{
 	EthNetworkNameFlag,
 	ChainIDFlag,
 	L1EthRPCFlag,
-	L2EthRPCFlag,
-	L1AddressManagerAddressFlag,
 	DBHostFlag,
 	DBPortFlag,
 	DBUserFlag,
@@ -162,9 +160,6 @@ var requiredFlags = []cli.Flag{
 }
 
 var optionalFlags = []cli.Flag{
-	BedrockFlag,
-	BedrockL1StandardBridgeAddress,
-	BedrockOptimismPortalAddress,
 	DisableIndexer,
 	LogLevelFlag,
 	LogTerminalFlag,
@@ -173,9 +168,8 @@ var optionalFlags = []cli.Flag{
 	SentryTraceRateFlag,
 	ConfDepthFlag,
 	MaxHeaderBatchSizeFlag,
-	L1StartBlockNumberFlag,
-	RESTHostnameFlag,
-	RESTPortFlag,
+	RPCHostnameFlag,
+	RPCPortFlag,
 	MetricsServerEnableFlag,
 	MetricsHostnameFlag,
 	MetricsPortFlag,
