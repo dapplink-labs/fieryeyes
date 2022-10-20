@@ -4,7 +4,7 @@ parent:
 -->
 
 <div align="center">
-  <h1> Bitos </h1>
+  <h1> Fieryeyes </h1>
 </div>
 
 <div align="center">
@@ -22,6 +22,7 @@ parent:
   </a>
 </div>
 
+Fieryeyes is a project that integrates NFT data capture, NFT digital rule sorting and NFT recommendation
 
 **Note**: Requires [Go 1.18+](https://golang.org/dl/)
 
