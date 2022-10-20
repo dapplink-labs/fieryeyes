@@ -2,13 +2,12 @@ package main
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/params"
+	sav_scrapy "github.com/savour-labs/fieryeyes/sav-scrapy"
 	"github.com/urfave/cli"
+	"os"
 
-	"github.com/savour-labs/fieryeyes/indexer"
 	"github.com/savour-labs/fieryeyes/indexer/flags"
 )
 
@@ -32,7 +31,7 @@ func main() {
 	app.Name = "indexer"
 	app.Usage = "Indexer Service"
 	app.Description = "Service for indexing nft data"
-	app.Action = indexer.Main(GitVersion)
+	app.Action = sav_scrapy.Main(GitVersion)
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Crit("Application failed", "message", err)

@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+option go_package ="../sav-scrapy/proto/sav_scrapy";
+package savourrpc.keylocker;
+
+enum ReturnCode{
+  SUCCESS = 0;
+  ERROR = 1;
+}
+
+message Chain {
+  string id = 1;
+  string chain = 2;
+}
+
+message GiantWhale {
+  string id = 1;
+  string address = 2;
+  string holder = 3;
+}
+
+message SupportChainReq{
+  string consumer_token = 1;
+}
+
+message SupportChainRep {
+  ReturnCode code=1;
+  string msg=2;
+  repeated Chain chains = 3;
+}
+
+message SetGiantWhaleReq {
+  string consumer_token = 1;
+  string chain = 2;
+  string address = 3;
+  string holder = 4;
+}
+
+message SetGiantWhaleRep {
+  ReturnCode code=1;
+  string msg=2;
+}
+
+message GetGiantWhaleReq {
+  string consumer_token = 1;
+  string chain = 2;
+  uint32 page = 3;
+  uint32 page_size = 4;
+}
+
+message GetGiantWhaleRep {
+  ReturnCode code=1;
+  string msg=2;
+  repeated GiantWhale gw_list = 3;
+}
+
+
+message RemoveGiantWhaleReq {
+  string consumer_token = 1;
+  string chain = 2;
+  uint32 address = 3;
+}
+
+message RemoveGiantWhaleRep {
+  ReturnCode code=1;
+  string msg=2;
+}
+
+service GiantWhaleService {
+  rpc getSupportChain(SupportChainReq) returns (SupportChainRep) {}
+  rpc setGiantWhale(SetGiantWhaleReq) returns (SetGiantWhaleRep) {}
+  rpc getGiantWhale(GetGiantWhaleReq) returns (GetGiantWhaleRep) {}
+  rpc removeGiantWhale(RemoveGiantWhaleReq) returns (RemoveGiantWhaleRep) {}
+}
