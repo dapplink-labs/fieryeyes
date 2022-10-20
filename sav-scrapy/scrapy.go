@@ -84,6 +84,11 @@ func (ss *SavourScrapy) Start() error {
 	if ss.cfg.DisableSavScrapy {
 		log.Info("sav scrapy disabled, only serving data")
 	}
+	err := ss.db.MigrateDb()
+	if err != nil {
+		log.Error("migrate database fail, err:", err)
+		return err
+	}
 	return ss.rpcServer.Start()
 }
 
