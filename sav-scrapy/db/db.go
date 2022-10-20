@@ -1,10 +1,10 @@
 package db
 
 import (
+	"github.com/savour-labs/fieryeyes/sav-scrapy/models"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"sav-rule/models"
 )
 
 type Database struct {
