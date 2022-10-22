@@ -55,6 +55,7 @@ func DealData(e *colly.HTMLElement) {
 		case "txs", "blocks":
 			return
 		case "accounts":
+			// 钱包地址
 			e1.ForEach("td", func(k2 int, e2 *colly.HTMLElement) {
 				switch k2 {
 				case 0:
@@ -69,10 +70,11 @@ func DealData(e *colly.HTMLElement) {
 			})
 			params = append(params, data)
 		case "tokens":
+			//合约地址
 			e1.ForEach("td", func(k2 int, e2 *colly.HTMLElement) {
 				switch k2 {
 				case 0:
-
+					// id号无价值
 				case 1:
 					data["account_addr"] = e2.Text
 				case 2:
