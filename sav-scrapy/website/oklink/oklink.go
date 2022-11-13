@@ -10,9 +10,9 @@ import (
 	"go.uber.org/zap"
 )
 
-func ScrapyEth() {
+func (c *OklinkClient) ScrapyEth() {
 	ctx := context.Background()
-	resp, err := OkLinkRequest(ctx, nil)
+	resp, err := c.OkLinkRequest(ctx, nil)
 	if err != nil {
 		return
 	}

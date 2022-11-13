@@ -1,7 +1,7 @@
 package etherscan
 
-func ScrapyEth() {
-	_, err := EtherscanRequest()
+func (client *EtherscanClient) ScrapyEth() {
+	_, err := client.EtherscanRequest()
 	if err != nil {
 		return
 	}

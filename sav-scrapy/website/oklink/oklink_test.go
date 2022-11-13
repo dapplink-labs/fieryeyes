@@ -1,6 +1,7 @@
 package oklink
 
 import (
+	"os"
 	"testing"
 
 	"github.com/savour-labs/fieryeyes/sav-scrapy/models"
@@ -10,6 +11,6 @@ import (
 func TestScrapyEth(t *testing.T) {
 	convey.Convey("TestScrapyEth", t, func() {
 		models.NewMysqlClient()
-		ScrapyEth()
+		NewOklinkClient("https://www.oklink.com/api/v5/explorer/address/rich-list?chainShortName=eth", os.Getenv("Ok_Access_Key")).ScrapyEth()
 	})
 }
