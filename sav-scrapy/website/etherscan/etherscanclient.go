@@ -12,13 +12,23 @@ import (
 	"go.uber.org/zap"
 )
 
-func EtherscanRequest() ([]byte, error) {
+type EtherscanClient struct {
+	Url string
+}
+
+func NewEtherscanClient(url string) *EtherscanClient {
+	return &EtherscanClient{
+		Url: url, //"https://etherscan.io/labelcloud"
+	}
+}
+
+func (client *EtherscanClient) EtherscanRequest() ([]byte, error) {
 	c := colly.NewCollector()
 	extensions.RandomUserAgent(c)
 	extensions.Referer(c)
 	// On every a element which has href attribute call callback
 	c.OnHTML("body", func(e *colly.HTMLElement) {
-		if e.Request.URL.String() == "https://etherscan.io/labelcloud" {
+		if e.Request.URL.String() == client.Url {
 			e.ForEach(".secondary-container a", func(i int, el *colly.HTMLElement) {
 				link := el.Attr("href")
 				fmt.Printf("Link found: %q -> %s\n", el.Text, link)
@@ -33,7 +43,7 @@ func EtherscanRequest() ([]byte, error) {
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting", r.URL.String())
 	})
-	c.Visit("https://etherscan.io/labelcloud")
+	c.Visit(client.Url)
 	return []byte{}, nil
 }
 

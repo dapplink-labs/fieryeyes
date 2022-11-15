@@ -28,7 +28,7 @@ func (d *Database) Config() string {
 }
 
 func (d *Database) MigrateDb() error {
-	if err := d.db.AutoMigrate(&models.Chain{}, &models.Address{}); err != nil {
+	if err := d.db.AutoMigrate(&models.Chain{}, &models.ContractAccount{}, &models.ChainAccount{}); err != nil {
 		log.WithError(err).Fatal("Failed to migrate database")
 		return err
 	}

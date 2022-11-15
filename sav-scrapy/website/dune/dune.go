@@ -10,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func ScrapyEth() {
+func (c *DueClient) ScrapyEth() {
 	ctx := context.Background()
 	req := map[string]interface{}{
 		"operationName": "FindResultDataByResult",
@@ -20,7 +20,7 @@ func ScrapyEth() {
 		},
 		"query": "query FindResultDataByResult($result_id: uuid!, $error_id: uuid!) {\n  query_results(where: {id: {_eq: $result_id}}) {\n    id\n    job_id\n    runtime\n    generated_at\n    columns\n    __typename\n  }\n  query_errors(where: {id: {_eq: $error_id}}) {\n    id\n    job_id\n    runtime\n    message\n    metadata\n    type\n    generated_at\n    __typename\n  }\n  get_result_by_result_id(args: {want_result_id: $result_id}) {\n    data\n    __typename\n  }\n}\n",
 	}
-	resp, err := DueRequest(ctx, req)
+	resp, err := c.DueRequest(ctx, req)
 	if err != nil {
 		return
 	}

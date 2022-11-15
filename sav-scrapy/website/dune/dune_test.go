@@ -10,6 +10,6 @@ import (
 func TestScrapyEth(t *testing.T) {
 	convey.Convey("TestScrapyEth", t, func() {
 		models.NewMysqlClient()
-		ScrapyEth()
+		NewDueClient("https://core-hsr.dune.com/v1/graphql").ScrapyEth()
 	})
 }

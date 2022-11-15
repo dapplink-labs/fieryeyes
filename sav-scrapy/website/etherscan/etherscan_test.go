@@ -10,6 +10,6 @@ import (
 func TestEtherscan(t *testing.T) {
 	convey.Convey("TestScrapyEth", t, func() {
 		models.NewMysqlClient()
-		ScrapyEth()
+		NewEtherscanClient("https://etherscan.io/labelcloud").ScrapyEth()
 	})
 }
