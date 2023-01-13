@@ -19,11 +19,11 @@ var (
 		Required: true,
 		EnvVar:   prefixEnvVar("BUILD_ENV"),
 	}
-	EthNetworkNameFlag = cli.StringFlag{
-		Name:     "eth-network-name",
+	EthRpcFlag = cli.StringFlag{
+		Name:     "eth-rpc",
 		Usage:    "Ethereum network name",
 		Required: true,
-		EnvVar:   prefixEnvVar("ETH_NETWORK_NAME"),
+		EnvVar:   prefixEnvVar("ETH_RPC"),
 	}
 	ChainIDFlag = cli.StringFlag{
 		Name:     "chain-id",
@@ -31,12 +31,7 @@ var (
 		Required: true,
 		EnvVar:   prefixEnvVar("CHAIN_ID"),
 	}
-	L1EthRPCFlag = cli.StringFlag{
-		Name:     "l1-eth-rpc",
-		Usage:    "HTTP provider URL for L1",
-		Required: true,
-		EnvVar:   prefixEnvVar("L1_ETH_RPC"),
-	}
+
 	DBHostFlag = cli.StringFlag{
 		Name:     "db-host",
 		Usage:    "Hostname of the database connection",
@@ -145,13 +140,17 @@ var (
 		Value:  7300,
 		EnvVar: prefixEnvVar("METRICS_PORT"),
 	}
+	HTTP2DisableFlag = cli.BoolFlag{
+		Name:   "http2-disable",
+		Usage:  "Whether or not to disable HTTP/2 support.",
+		EnvVar: prefixEnvVar("HTTP2_DISABLE"),
+	}
 )
 
 var requiredFlags = []cli.Flag{
 	BuildEnvFlag,
-	EthNetworkNameFlag,
 	ChainIDFlag,
-	L1EthRPCFlag,
+	EthRpcFlag,
 	DBHostFlag,
 	DBPortFlag,
 	DBUserFlag,
@@ -173,6 +172,7 @@ var optionalFlags = []cli.Flag{
 	MetricsServerEnableFlag,
 	MetricsHostnameFlag,
 	MetricsPortFlag,
+	HTTP2DisableFlag,
 }
 
 // Flags contains the list of configuration options available to the binary.

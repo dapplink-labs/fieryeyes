@@ -1,4 +1,4 @@
-package model
+package models
 
 import (
 	"gorm.io/gorm"
@@ -16,21 +16,21 @@ func (b *Blocks) TableName() string {
 	return "blocks"
 }
 
-func (b Blocks) SelfInsert(db *gorm.DB) error {
+func (b *Blocks) SelfInsert(db *gorm.DB) error {
 	if err := db.Create(&b).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (b Blocks) SelfUpdate(db *gorm.DB) error {
+func (b *Blocks) SelfUpdate(db *gorm.DB) error {
 	if err := db.Updates(&b).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (b Blocks) GetFirstColumn(db *gorm.DB) (*Blocks, error) {
+func (b *Blocks) GetFirstColumn(db *gorm.DB) (*Blocks, error) {
 	var block *Blocks
 	if err := db.First(&block).Error; err != nil {
 		return nil, err

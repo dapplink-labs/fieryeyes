@@ -1,34 +1,44 @@
 package db
 
 import (
-	"github.com/savour-labs/fieryeyes/sav-scrapy/models"
+	"context"
+	"fmt"
+	"github.com/savour-labs/fieryeyes/indexer/models"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-type Database struct {
-	db     *gorm.DB
-	config string
+type DatabaseConfig struct {
+	Username string
+	Password string
+	Host     string
+	Port     int
+	DbName   string
 }
 
-func NewDatabase(config string) (*Database, error) {
-	db, err := gorm.Open(mysql.Open(config))
+type Database struct {
+	Ctx context.Context
+	Db  *gorm.DB
+	Cfg *DatabaseConfig
+}
+
+func NewDatabase(ctx context.Context, cfg *DatabaseConfig) (*Database, error) {
+	dsnTemplate := "%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=true&loc=Local"
+	dsn := fmt.Sprintf(dsnTemplate, cfg.Username, cfg.Password, cfg.Host, cfg.Port, cfg.DbName)
+	db, err := gorm.Open(mysql.Open(dsn))
 	if err != nil {
 		return nil, err
 	}
 	return &Database{
-		db:     db,
-		config: config,
+		Ctx: ctx,
+		Db:  db,
+		Cfg: cfg,
 	}, nil
 }
 
-func (d *Database) Config() string {
-	return d.config
-}
-
 func (d *Database) MigrateDb() error {
-	if err := d.db.AutoMigrate(&models.Chain{}, &models.ContractAccount{}, &models.ChainAccount{}); err != nil {
+	if err := d.Db.AutoMigrate(&models.Blocks{}); err != nil {
 		log.WithError(err).Fatal("Failed to migrate database")
 		return err
 	}
