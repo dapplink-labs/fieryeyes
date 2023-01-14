@@ -3,6 +3,8 @@ package chain
 import (
 	"context"
 	"crypto/tls"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/ethereum/go-ethereum/rpc"
@@ -83,6 +85,33 @@ func (ecc *EvmChainClient) InitBlock() error {
 	return nil
 }
 
+func (ecc *EvmChainClient) ProcessBlock(block *types.Block) error {
+	for _, tx := range block.Transactions() {
+		from, err := types.Sender(types.LatestSignerForChainID(tx.ChainId()), tx)
+		if err != nil {
+			log.Error("Failed to read the sender address", "TxHash", tx.Hash(), "err", err)
+			return err
+		}
+		log.Info("hand transaction", "txHash", tx.Hash().String())
+		transaction := &models.Transaction{
+			BlockNumber: block.Number().Uint64(),
+			TxHash:      tx.Hash().Hex(),
+			From:        from.Hex(),
+			Timestamp:   time.Unix(int64(block.Time()), 0),
+			InputData:   tx.Data(),
+		}
+		if tx.To() == nil {
+			log.Info("Contract creation found", "Sender", transaction.From, "TxHash", transaction.TxHash)
+			transaction.Contract = crypto.CreateAddress(from, tx.Nonce()).Hex()
+			// todo: hand contract create
+		} else {
+			transaction.Contract = tx.To().Hex()
+			// todo: hand contract call
+		}
+	}
+	return nil
+}
+
 func (ecc *EvmChainClient) Start() error {
 	ecc.wg.Add(1)
 	go ecc.SyncLoop()
@@ -113,7 +142,7 @@ func (ecc *EvmChainClient) SyncLoop() {
 				log.Error("get db block number fail", "err", err)
 				return
 			}
-			if block.BlockHeight >= latestBlock || block.BlockHeight >= block.LatestBlockHeight {
+			if block.BlockHeight >= latestBlock {
 				log.Info("chain latest block is equal db block", "chain block", latestBlock, "db block", block.LatestBlockHeight)
 				continue
 			}
@@ -121,9 +150,13 @@ func (ecc *EvmChainClient) SyncLoop() {
 			if err != nil {
 				log.Error("get block by number fail", "err", err)
 			}
-
 			log.Info("tBlock", "blockNumber", tBlock.Number(), "blockHash", tBlock.Hash())
 
+			err = ecc.ProcessBlock(tBlock)
+			if err != nil {
+				log.Info("process block fail", "err", err)
+				return
+			}
 			block.LatestBlockHeight = latestBlock
 			block.BlockHeight = block.BlockHeight + 1
 			err = block.SelfUpdate(ecc.Cfg.Database.Db)
