@@ -19,3 +19,11 @@ test:
 lint:
 	golangci-lint run ./...
 
+
+.PHONY: \
+	indexer \
+	binding \
+	clean \
+	test \
+	lint
+

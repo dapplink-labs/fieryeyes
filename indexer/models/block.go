@@ -2,13 +2,12 @@ package models
 
 import (
 	"gorm.io/gorm"
-	"math/big"
 )
 
 type Blocks struct {
-	Id                int64    `json:"id" gorm:"primary_key;type:int AUTO_INCREMENT"`
-	BlockHeight       *big.Int `json:"block_height" gorm:"column:block_height;type:BIGINT NOT NULL;default: 0;"`
-	LatestBlockHeight *big.Int `json:"latest_block_height" gorm:"column:latest_block_height; type:BIGINT NOT NULL;default: 0;"`
+	Id                int64  `json:"id" gorm:"primary_key;AUTO_INCREMENT"`
+	BlockHeight       uint64 `json:"block_height" gorm:"column:block_height;default: 0;"`
+	LatestBlockHeight uint64 `json:"latest_block_height" gorm:"column:latest_block_height;default: 0;"`
 	*gorm.Model
 }
 
@@ -36,4 +35,13 @@ func (b *Blocks) GetFirstColumn(db *gorm.DB) (*Blocks, error) {
 		return nil, err
 	}
 	return block, nil
+}
+
+func (b *Blocks) ExistBlock(db *gorm.DB) bool {
+	var count int64
+	db.Find(&b).Count(&count)
+	if count > 0 {
+		return true
+	}
+	return false
 }

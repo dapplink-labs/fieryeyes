@@ -2,7 +2,6 @@ package flags
 
 import (
 	"github.com/urfave/cli"
-	"time"
 )
 
 const envVarPrefix = "INDEXER_"
@@ -12,26 +11,30 @@ func prefixEnvVar(name string) string {
 }
 
 var (
-	BuildEnvFlag = cli.StringFlag{
-		Name: "build-env",
-		Usage: "Build environment for which the binary is produced, " +
-			"e.g. production or development",
-		Required: true,
-		EnvVar:   prefixEnvVar("BUILD_ENV"),
-	}
 	EthRpcFlag = cli.StringFlag{
 		Name:     "eth-rpc",
 		Usage:    "Ethereum network name",
 		Required: true,
 		EnvVar:   prefixEnvVar("ETH_RPC"),
 	}
-	ChainIDFlag = cli.StringFlag{
-		Name:     "chain-id",
-		Usage:    "Ethereum chain ID",
+	SyncBlockHeightFlag = cli.Uint64Flag{
+		Name:     "sync-block-height",
+		Usage:    "sync current block",
 		Required: true,
-		EnvVar:   prefixEnvVar("CHAIN_ID"),
+		EnvVar:   prefixEnvVar("SYNC_BLOCK_HEIGHT"),
 	}
-
+	LoopIntervalFlag = cli.DurationFlag{
+		Name:     "loop-interval",
+		Usage:    "loop interval for sync block",
+		Required: true,
+		EnvVar:   prefixEnvVar("LOOP_INTERVAL"),
+	}
+	DBUserNameFlag = cli.StringFlag{
+		Name:     "db-user",
+		Usage:    "Username of the database connection",
+		Required: true,
+		EnvVar:   prefixEnvVar("DB_USER_NAME"),
+	}
 	DBHostFlag = cli.StringFlag{
 		Name:     "db-host",
 		Usage:    "Hostname of the database connection",
@@ -44,12 +47,7 @@ var (
 		Required: true,
 		EnvVar:   prefixEnvVar("DB_PORT"),
 	}
-	DBUserFlag = cli.StringFlag{
-		Name:     "db-user",
-		Usage:    "Username of the database connection",
-		Required: true,
-		EnvVar:   prefixEnvVar("DB_USER"),
-	}
+
 	DBPasswordFlag = cli.StringFlag{
 		Name:     "db-password",
 		Usage:    "Password of the database connection",
@@ -62,14 +60,20 @@ var (
 		Required: true,
 		EnvVar:   prefixEnvVar("DB_NAME"),
 	}
+	RPCHostNameFlag = cli.StringFlag{
+		Name:   "RPC-hostname",
+		Usage:  "The hostname of the RPC server",
+		Value:  "127.0.0.1",
+		EnvVar: prefixEnvVar("RPC_HOST_NAME"),
+	}
+	RPCPortFlag = cli.Uint64Flag{
+		Name:   "RPC-port",
+		Usage:  "The port of the RPC server",
+		Value:  8080,
+		EnvVar: prefixEnvVar("RPC_PORT"),
+	}
 
 	/* Optional Flags */
-	DisableIndexer = cli.BoolFlag{
-		Name:     "disable-indexer",
-		Usage:    "Whether or not to enable the indexer on this instance",
-		Required: false,
-		EnvVar:   prefixEnvVar("DISABLE_INDEXER"),
-	}
 	LogLevelFlag = cli.StringFlag{
 		Name:   "log-level",
 		Usage:  "The lowest log level that will be output",
@@ -82,46 +86,6 @@ var (
 			"in JSON format. If SENTRY_ENABLE is set to true, this flag is " +
 			"ignored and logs are printed using JSON",
 		EnvVar: prefixEnvVar("LOG_TERMINAL"),
-	}
-	SentryEnableFlag = cli.BoolFlag{
-		Name:   "sentry-enable",
-		Usage:  "Whether or not to enable Sentry. If true, sentry-dsn must also be set",
-		EnvVar: prefixEnvVar("SENTRY_ENABLE"),
-	}
-	SentryDsnFlag = cli.StringFlag{
-		Name:   "sentry-dsn",
-		Usage:  "Sentry data source name",
-		EnvVar: prefixEnvVar("SENTRY_DSN"),
-	}
-	SentryTraceRateFlag = cli.DurationFlag{
-		Name:   "sentry-trace-rate",
-		Usage:  "Sentry trace rate",
-		Value:  50 * time.Millisecond,
-		EnvVar: prefixEnvVar("SENTRY_TRACE_RATE"),
-	}
-	ConfDepthFlag = cli.Uint64Flag{
-		Name:   "conf-depth",
-		Usage:  "The number of confirmations after which headers are considered confirmed",
-		Value:  20,
-		EnvVar: prefixEnvVar("CONF_DEPTH"),
-	}
-	MaxHeaderBatchSizeFlag = cli.Uint64Flag{
-		Name:   "max-header-batch-size",
-		Usage:  "The maximum number of headers to request as a batch",
-		Value:  2000,
-		EnvVar: prefixEnvVar("MAX_HEADER_BATCH_SIZE"),
-	}
-	RPCHostnameFlag = cli.StringFlag{
-		Name:   "RPC-hostname",
-		Usage:  "The hostname of the RPC server",
-		Value:  "127.0.0.1",
-		EnvVar: prefixEnvVar("RPC_HOSTNAME"),
-	}
-	RPCPortFlag = cli.Uint64Flag{
-		Name:   "RPC-port",
-		Usage:  "The port of the RPC server",
-		Value:  8080,
-		EnvVar: prefixEnvVar("RPC_PORT"),
 	}
 	MetricsServerEnableFlag = cli.BoolFlag{
 		Name:   "metrics-server-enable",
@@ -148,27 +112,21 @@ var (
 )
 
 var requiredFlags = []cli.Flag{
-	BuildEnvFlag,
-	ChainIDFlag,
 	EthRpcFlag,
+	SyncBlockHeightFlag,
+	LoopIntervalFlag,
+	DBUserNameFlag,
 	DBHostFlag,
 	DBPortFlag,
-	DBUserFlag,
 	DBPasswordFlag,
 	DBNameFlag,
+	RPCHostNameFlag,
+	RPCPortFlag,
 }
 
 var optionalFlags = []cli.Flag{
-	DisableIndexer,
 	LogLevelFlag,
 	LogTerminalFlag,
-	SentryEnableFlag,
-	SentryDsnFlag,
-	SentryTraceRateFlag,
-	ConfDepthFlag,
-	MaxHeaderBatchSizeFlag,
-	RPCHostnameFlag,
-	RPCPortFlag,
 	MetricsServerEnableFlag,
 	MetricsHostnameFlag,
 	MetricsPortFlag,

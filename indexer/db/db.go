@@ -13,7 +13,7 @@ type DatabaseConfig struct {
 	Username string
 	Password string
 	Host     string
-	Port     int
+	Port     uint64
 	DbName   string
 }
 
@@ -24,7 +24,7 @@ type Database struct {
 }
 
 func NewDatabase(ctx context.Context, cfg *DatabaseConfig) (*Database, error) {
-	dsnTemplate := "%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=true&loc=Local"
+	dsnTemplate := "%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=true&loc=Local"
 	dsn := fmt.Sprintf(dsnTemplate, cfg.Username, cfg.Password, cfg.Host, cfg.Port, cfg.DbName)
 	db, err := gorm.Open(mysql.Open(dsn))
 	if err != nil {

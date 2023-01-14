@@ -9,6 +9,7 @@ import (
 	"github.com/savour-labs/fieryeyes/indexer/services"
 	"github.com/urfave/cli"
 	"os"
+	"strconv"
 )
 
 func Main(gitVersion string) func(ctx *cli.Context) error {
@@ -64,12 +65,40 @@ func NewIndexer(cfg Config) (*Indexer, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	log.Root().SetHandler(log.LvlFilterHandler(logLevel, logHandler))
 
-	ethCli, err := chain.NewEvmChainClient(ctx, cfg.EthRpc, cfg.DisableHTTP2)
+	dbConfig := &db.DatabaseConfig{
+		Username: cfg.DbUsername,
+		Password: cfg.DbPassword,
+		Host:     cfg.DbHost,
+		Port:     cfg.DbPort,
+		DbName:   cfg.DbName,
+	}
+	dbSelf, err := db.NewDatabase(ctx, dbConfig)
+	if err != nil {
+		log.Error("new database fail", "err", err)
+		return nil, err
+	}
+	err = dbSelf.MigrateDb()
+	if err != nil {
+		log.Error("migrate db fail", "err", err)
+		return nil, err
+	}
+	evmConfig := &chain.EvmChainConfig{
+		EthRpc:          cfg.EthRpc,
+		DisableHTTP2:    cfg.DisableHTTP2,
+		SyncBlockHeight: cfg.SyncBlockHeight,
+		LoopInterval:    cfg.LoopInterval,
+		Database:        dbSelf,
+	}
+	ethCli, err := chain.NewEvmChainClient(ctx, evmConfig)
 	if err != nil {
 		log.Error("new evm chain client fail", "err", err)
+		return nil, err
+	}
+	err = ethCli.InitBlock()
+	if err != nil {
+		log.Error("init block fail", "err", err)
 		return nil, err
 	}
 
@@ -85,22 +114,9 @@ func NewIndexer(cfg Config) (*Indexer, error) {
 		log.Info("metrics server enabled", "host", cfg.MetricsHostname, "port", cfg.MetricsPort)
 	}
 
-	dbConfig := &db.DatabaseConfig{
-		Username: cfg.DbUsername,
-		Password: cfg.DbPassword,
-		Host:     cfg.DbHost,
-		Port:     cfg.DbPort,
-		DbName:   cfg.DbName,
-	}
-
-	dbSelf, err := db.NewDatabase(ctx, dbConfig)
-	if err != nil {
-		log.Error("new database fail", "err", err)
-	}
-
 	iRpcConfig := &services.IndexerRPCConfig{
 		RpcHost: cfg.RpcHost,
-		RpcPort: cfg.RpcPort,
+		RpcPort: strconv.FormatUint(cfg.RpcPort, 10),
 	}
 	iRpcServices, err := services.NewIndexerRPCServices(ctx, dbSelf, iRpcConfig)
 	if err != nil {
@@ -121,7 +137,9 @@ func NewIndexer(cfg Config) (*Indexer, error) {
 
 func (i Indexer) Start() error {
 	log.Info("indexer start success")
-	i.indexerRpcServices.Start()
+	go i.ethClient.SyncLoop()
+	// i.indexerRpcServices.Start()
+	return nil
 }
 
 func (i Indexer) Stop() {
