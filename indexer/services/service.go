@@ -22,7 +22,7 @@ type IIndexerRpcServices interface {
 }
 
 type CommonRequest interface {
-	GetChain() string
+	GetConsumerToken() string
 }
 
 type IndexerRPCConfig struct {
@@ -76,8 +76,8 @@ func (rpc *IndexerRPCServices) interceptor(ctx context.Context, req interface{},
 	}()
 	pos := strings.LastIndex(info.FullMethod, "/")
 	method := info.FullMethod[pos+1:]
-	chain := req.(CommonRequest).GetChain()
-	log.Info(method, "chain", chain, "req", req)
+	token := req.(CommonRequest).GetConsumerToken()
+	log.Info(method, "token", token, "req", req)
 	resp, err = handler(ctx, req)
 	log.Debug("Finish handling", "resp", resp, "err", err)
 	return
