@@ -137,11 +137,11 @@ func NewIndexer(cfg Config) (*Indexer, error) {
 
 func (i Indexer) Start() error {
 	log.Info("indexer start success")
-	go i.ethClient.SyncLoop()
+	i.ethClient.Start()
 	// i.indexerRpcServices.Start()
 	return nil
 }
 
 func (i Indexer) Stop() {
-	log.Info("indexer stop success")
+	i.ethClient.Stop()
 }

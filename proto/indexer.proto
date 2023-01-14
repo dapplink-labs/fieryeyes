@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option go_package ="../indexer/proto/indexer";
+package indexer;
+
+enum ReturnCode{
+  SUCCESS = 0;
+  ERROR = 1;
+}
+
+message LatestBlock {
+  string consumer_token = 1;
+}
+
+message LatestBlockRep {
+  ReturnCode code=1;
+  string msg=2;
+  uint64 block_number = 3;
+}
+
+service IndexerRpcService {
+  rpc GetLatestBlock(LatestBlock) returns (LatestBlockRep) {}
+}
+
+
+
+
+
+

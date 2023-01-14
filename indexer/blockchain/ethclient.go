@@ -83,6 +83,17 @@ func (ecc *EvmChainClient) InitBlock() error {
 	return nil
 }
 
+func (ecc *EvmChainClient) Start() error {
+	ecc.wg.Add(1)
+	go ecc.SyncLoop()
+	return nil
+}
+
+func (ecc *EvmChainClient) Stop() {
+	ecc.cancel()
+	ecc.wg.Wait()
+}
+
 func (ecc *EvmChainClient) SyncLoop() {
 	defer ecc.wg.Done()
 	ticker := time.NewTicker(ecc.Cfg.LoopInterval)

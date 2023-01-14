@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/savour-labs/fieryeyes/indexer/db"
-	"github.com/savour-labs/fieryeyes/sav-scrapy/proto/sav_scrapy"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -13,7 +12,7 @@ import (
 )
 
 type IIndexerRpcServices interface {
-	GetSupportChain(ctx context.Context, req *sav_scrapy.SupportChainReq) (*sav_scrapy.SupportChainRep, error)
+	//GetSupportChain(ctx context.Context, req *sav_scrapy.SupportChainReq) (*sav_scrapy.SupportChainRep, error)
 }
 
 type CommonRequest interface {
@@ -40,9 +39,9 @@ func NewIndexerRPCServices(ctx context.Context, db *db.Database, cfg *IndexerRPC
 	}, nil
 }
 
-func (rpc *IndexerRPCServices) GetSupportChain(ctx context.Context, req *sav_scrapy.SupportChainReq) (*sav_scrapy.SupportChainRep, error) {
-	return nil, nil
-}
+//func (rpc *IndexerRPCServices) GetSupportChain(ctx context.Context, req *sav_scrapy.SupportChainReq) (*sav_scrapy.SupportChainRep, error) {
+//	return nil, nil
+//}
 
 func (rpc *IndexerRPCServices) interceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
 	defer func() {
