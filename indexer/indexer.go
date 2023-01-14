@@ -115,10 +115,11 @@ func NewIndexer(cfg Config) (*Indexer, error) {
 	}
 
 	iRpcConfig := &services.IndexerRPCConfig{
-		RpcHost: cfg.RpcHost,
-		RpcPort: strconv.FormatUint(cfg.RpcPort, 10),
+		RpcHost:  cfg.RpcHost,
+		RpcPort:  strconv.FormatUint(cfg.RpcPort, 10),
+		Database: dbSelf,
 	}
-	iRpcServices, err := services.NewIndexerRPCServices(ctx, dbSelf, iRpcConfig)
+	iRpcServices, err := services.NewIndexerRPCServices(ctx, iRpcConfig)
 	if err != nil {
 		log.Error("new indexer rpc services fail", "err", err)
 		return nil, err
@@ -138,10 +139,12 @@ func NewIndexer(cfg Config) (*Indexer, error) {
 func (i Indexer) Start() error {
 	log.Info("indexer start success")
 	i.ethClient.Start()
-	// i.indexerRpcServices.Start()
+	i.indexerRpcServices.Start()
 	return nil
 }
 
 func (i Indexer) Stop() {
 	i.ethClient.Stop()
+	i.indexerRpcServices.Stop()
+	log.Info("indexer stop success")
 }
