@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+option go_package ="../indexer/proto/fe_law";
+package fe_law;
+
+enum ReturnCode{
+  SUCCESS = 0;
+  ERROR = 1;
+}
+
+message GiantWhaleWalletAddressLawReq {
+  string consumer_token = 1;
+}
+
+message GiantWhaleWalletAddressLawRep {
+  ReturnCode code=1;
+  string msg=2;
+  string token_value=3;
+  string nft_value=4;
+  uint64 token_activity=5;
+  uint64 nft_activity=6;
+  uint64 total_token=7;
+  uint64 total_nft=8;
+}
+
+message NftCollectionsLawReq {
+  string consumer_token = 1;
+}
+
+message NftCollectionsLawRep {
+  ReturnCode code=1;
+  string msg=2;
+  string collection_average_value=3;
+  uint64 collection_average_transactions=4;
+  uint64 collection_daily_transactions=5;
+  uint64 collection_holder_address=6;
+  string collection_average_transactionPrice=7;
+  string collection_daily_transactionPrice=8;
+}
+
+message SingleNftLawReq {
+  string consumer_token = 1;
+}
+
+message SingleNftLawRep {
+  ReturnCode code=1;
+  string msg=2;
+  uint64 nft_total_transactions=3;
+  uint64 nft_daily_transactions=4;
+  string nft_latest_price=5;
+  string nft_average_transactionPrice=6;
+  string nft_daily_transactionPrice=7;
+}
+
+
+service LawRpcService {
+  rpc GetGiantWhaleWalletAddressLaw(GiantWhaleWalletAddressLawReq) returns (GiantWhaleWalletAddressLawRep) {}
+  rpc GetNftCollectionsLaw(NftCollectionsLawReq) returns (NftCollectionsLawRep) {}
+  rpc GetSingleNftLaw(SingleNftLawReq) returns (SingleNftLawRep) {}
+}
