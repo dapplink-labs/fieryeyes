@@ -31,9 +31,9 @@ type SingleNft struct {
 }
 
 type FeLawConfig struct {
-	giantWhaleWalletAddress *GiantWhaleWalletAddress
-	nftCollections          *NftCollections
-	singleNft               *SingleNft
+	GiantWhaleWalletAddress *GiantWhaleWalletAddress
+	NftCollections          *NftCollections
+	SingleNft               *SingleNft
 }
 
 type FeLaw struct {
@@ -49,13 +49,13 @@ func NewFeLaw(ctx context.Context, Conf *FeLawConfig) (*FeLaw, error) {
 }
 
 func (fw *FeLaw) GiantWhaleWalletAddressLaw() (*GiantWhaleWalletAddress, error) {
-	return fw.FlConfig.giantWhaleWalletAddress, nil
+	return fw.FlConfig.GiantWhaleWalletAddress, nil
 }
 
 func (fw *FeLaw) NftCollectionsLaw() (*NftCollections, error) {
-	return fw.FlConfig.nftCollections, nil
+	return fw.FlConfig.NftCollections, nil
 }
 
 func (fw *FeLaw) SingleNftLaw() (*SingleNft, error) {
-	return fw.FlConfig.singleNft, nil
+	return fw.FlConfig.SingleNft, nil
 }

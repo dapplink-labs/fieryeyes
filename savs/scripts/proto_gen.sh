@@ -25,6 +25,8 @@ else
     export PATH=$PATH:$GOPATH/bin
     cd ./../proto/
     protoc -I ./ --go_out=./ --go-grpc_out=./ ./scrapy.proto
+    protoc -I ./ --go_out=./ --go-grpc_out=./ ./indexer.proto
+    protoc -I ./ --go_out=./ --go-grpc_out=./ ./law.proto
 
     exit_if $?
     echo Done

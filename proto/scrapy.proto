@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-option go_package ="../sav-scrapy/proto/sav_scrapy";
-package savourrpc.keylocker;
+option go_package ="../fe-scrapy/protobuf";
+package fe_scrapy.protobuf;
 
 enum ReturnCode{
   SUCCESS = 0;

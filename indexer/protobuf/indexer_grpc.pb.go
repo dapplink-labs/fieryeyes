@@ -56,6 +56,7 @@ type UnimplementedIndexerRpcServiceServer struct {
 func (UnimplementedIndexerRpcServiceServer) GetLatestBlock(context.Context, *LatestBlock) (*LatestBlockRep, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetLatestBlock not implemented")
 }
+func (UnimplementedIndexerRpcServiceServer) mustEmbedUnimplementedIndexerRpcServiceServer() {}
 
 // UnsafeIndexerRpcServiceServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to IndexerRpcServiceServer will

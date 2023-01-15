@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-option go_package ="../indexer/proto/fe_law";
-package fe_law;
+option go_package ="../fe-law/protobuf";
+package fe_law.protobuf;
 
 enum ReturnCode{
   SUCCESS = 0;

@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/savour-labs/fieryeyes/fe-scrapy/db"
-	"github.com/savour-labs/fieryeyes/fe-scrapy/proto/sav_scrapy"
+	"github.com/savour-labs/fieryeyes/fe-scrapy/protobuf"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/reflection"
@@ -15,10 +15,10 @@ import (
 )
 
 type ScrapyRpcServices interface {
-	GetSupportChain(ctx context.Context, req *sav_scrapy.SupportChainReq) (*sav_scrapy.SupportChainRep, error)
-	SetGiantWhale(ctx context.Context, in *sav_scrapy.SetGiantWhaleReq) (*sav_scrapy.SetGiantWhaleRep, error)
-	GetGiantWhale(ctx context.Context, in *sav_scrapy.GetGiantWhaleReq) (*sav_scrapy.GetGiantWhaleRep, error)
-	RemoveGiantWhale(ctx context.Context, in *sav_scrapy.RemoveGiantWhaleReq) (*sav_scrapy.RemoveGiantWhaleRep, error)
+	GetSupportChain(ctx context.Context, req *protobuf.SupportChainReq) (*protobuf.SupportChainRep, error)
+	SetGiantWhale(ctx context.Context, in *protobuf.SetGiantWhaleReq) (*protobuf.SetGiantWhaleRep, error)
+	GetGiantWhale(ctx context.Context, in *protobuf.GetGiantWhaleReq) (*protobuf.GetGiantWhaleRep, error)
+	RemoveGiantWhale(ctx context.Context, in *protobuf.RemoveGiantWhaleReq) (*protobuf.RemoveGiantWhaleRep, error)
 }
 
 type CommonRequest interface {
@@ -40,22 +40,22 @@ func NewRPCServices(db *db.Database, rpcHost, rpcPort string) (*RPCServices, err
 	}, nil
 }
 
-func (rpc *RPCServices) GetSupportChain(ctx context.Context, req *sav_scrapy.SupportChainReq) (*sav_scrapy.SupportChainRep, error) {
+func (rpc *RPCServices) GetSupportChain(ctx context.Context, req *protobuf.SupportChainReq) (*protobuf.SupportChainRep, error) {
 	return nil, nil
 }
 
-func (rpc *RPCServices) SetGiantWhale(ctx context.Context, req *sav_scrapy.SetGiantWhaleReq) (*sav_scrapy.SetGiantWhaleRep, error) {
-	return &sav_scrapy.SetGiantWhaleRep{
-		Code: sav_scrapy.ReturnCode_SUCCESS,
+func (rpc *RPCServices) SetGiantWhale(ctx context.Context, req *protobuf.SetGiantWhaleReq) (*protobuf.SetGiantWhaleRep, error) {
+	return &protobuf.SetGiantWhaleRep{
+		Code: protobuf.ReturnCode_SUCCESS,
 		Msg:  "Success for api",
 	}, nil
 }
 
-func (rpc *RPCServices) GetGiantWhale(ctx context.Context, req *sav_scrapy.GetGiantWhaleReq) (*sav_scrapy.GetGiantWhaleRep, error) {
+func (rpc *RPCServices) GetGiantWhale(ctx context.Context, req *protobuf.GetGiantWhaleReq) (*protobuf.GetGiantWhaleRep, error) {
 	return nil, nil
 }
 
-func (rpc *RPCServices) RemoveGiantWhale(ctx context.Context, req *sav_scrapy.RemoveGiantWhaleReq) (*sav_scrapy.RemoveGiantWhaleRep, error) {
+func (rpc *RPCServices) RemoveGiantWhale(ctx context.Context, req *protobuf.RemoveGiantWhaleReq) (*protobuf.RemoveGiantWhaleRep, error) {
 	return nil, nil
 }
 
@@ -79,7 +79,7 @@ func (rpc *RPCServices) interceptor(ctx context.Context, req interface{}, info *
 func (rpc *RPCServices) Start() error {
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(rpc.interceptor))
 	defer grpcServer.GracefulStop()
-	sav_scrapy.RegisterGiantWhaleServiceServer(grpcServer, rpc)
+	protobuf.RegisterGiantWhaleServiceServer(grpcServer, rpc)
 	listen, err := net.Listen("tcp", ":"+rpc.RPCPort)
 	if err != nil {
 		log.Error("net listen failed", "err", err)
