@@ -11,6 +11,18 @@ func prefixEnvVar(name string) string {
 }
 
 var (
+	EthRpcFlag = cli.StringFlag{
+		Name:     "eth-rpc",
+		Usage:    "Ethereum network name",
+		Required: true,
+		EnvVar:   prefixEnvVar("ETH_RPC"),
+	}
+	SyncBlockHeightFlag = cli.Uint64Flag{
+		Name:     "sync-block-height",
+		Usage:    "sync current block",
+		Required: true,
+		EnvVar:   prefixEnvVar("SYNC_BLOCK_HEIGHT"),
+	}
 	LoopIntervalFlag = cli.DurationFlag{
 		Name:     "loop-interval",
 		Usage:    "loop interval for sync block",
