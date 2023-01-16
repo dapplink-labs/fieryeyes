@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+option go_package ="../indexer/protobuf";
+package indexer.protobuf;
+
+enum ReturnCode{
+  SUCCESS = 0;
+  ERROR = 1;
+}
+
+message AddressInfoReq {
+  string consumer_token = 1;
+  string address = 2;
+}
+
+message AddressInfoRep {
+  ReturnCode code=1;
+  string msg=2;
+}
+
+message NftCollectionsInfoReq {
+  string consumer_token = 1;
+  string token_address = 2;
+}
+
+message NftCollectionsInfoRep {
+  ReturnCode code=1;
+  string msg=2;
+}
+
+message NftInfoReq {
+  string consumer_token = 1;
+  string token_id = 2;
+}
+
+message Collections {
+  ReturnCode code=1;
+  string msg=2;
+}
+
+service InternalRpcService {
+  rpc GetAddressInfo(AddressInfoReq) returns (AddressInfoRep) {}
+  rpc GetNftCollectionsInfo(NftCollectionsInfoReq) returns (NftCollectionsInfoRep) {}
+  rpc GetNftInfo(NftInfoReq) returns (Collections) {}
+}
+
+
+
+
+
+

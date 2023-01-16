@@ -4,7 +4,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-const envVarPrefix = "INDEXER_"
+const envVarPrefix = "FE_SERVICES_"
 
 func prefixEnvVar(name string) string {
 	return envVarPrefix + name
@@ -13,7 +13,7 @@ func prefixEnvVar(name string) string {
 var (
 	LoopIntervalFlag = cli.DurationFlag{
 		Name:     "loop-interval",
-		Usage:    "loop interval for sync block",
+		Usage:    "loop interval for sync data from indexer",
 		Required: true,
 		EnvVar:   prefixEnvVar("LOOP_INTERVAL"),
 	}
@@ -48,25 +48,6 @@ var (
 		Required: true,
 		EnvVar:   prefixEnvVar("DB_NAME"),
 	}
-	ApiServicePortFlag = cli.Uint64Flag{
-		Name:   "api-service-port",
-		Usage:  "The port of the RPC server",
-		Value:  8080,
-		EnvVar: prefixEnvVar("API_SERVICE_PORT"),
-	}
-	IndexerRPCHostNameFlag = cli.StringFlag{
-		Name:   "indexer-rpc-hostname",
-		Usage:  "The hostname of indexer RPC server",
-		Value:  "127.0.0.1",
-		EnvVar: prefixEnvVar("INDEXER_RPC_HOST_NAME"),
-	}
-	IndexerRPCPortFlag = cli.Uint64Flag{
-		Name:   "indexer-rpc-port",
-		Usage:  "The port of the indexer RPC server",
-		Value:  8080,
-		EnvVar: prefixEnvVar("INDEXER_RPC_PORT"),
-	}
-
 	RPCHostNameFlag = cli.StringFlag{
 		Name:   "RPC-hostname",
 		Usage:  "The hostname of the RPC server",
@@ -80,7 +61,6 @@ var (
 		EnvVar: prefixEnvVar("RPC_PORT"),
 	}
 
-	/* Optional Flags */
 	LogLevelFlag = cli.StringFlag{
 		Name:   "log-level",
 		Usage:  "The lowest log level that will be output",
@@ -111,11 +91,6 @@ var (
 		Value:  7300,
 		EnvVar: prefixEnvVar("METRICS_PORT"),
 	}
-	EchoDebugFlag = cli.BoolFlag{
-		Name:   "echo-debug",
-		Usage:  "Echo log debug",
-		EnvVar: prefixEnvVar(envVarPrefix, "ECHO_DEBUG"),
-	}
 )
 
 var requiredFlags = []cli.Flag{
@@ -125,19 +100,16 @@ var requiredFlags = []cli.Flag{
 	DBPortFlag,
 	DBPasswordFlag,
 	DBNameFlag,
-
 	RPCHostNameFlag,
 	RPCPortFlag,
 }
 
 var optionalFlags = []cli.Flag{
+	LogLevelFlag,
+	LogTerminalFlag,
 	MetricsServerEnableFlag,
 	MetricsHostnameFlag,
 	MetricsPortFlag,
-	LogLevelFlag,
-	LogTerminalFlag,
-	EchoDebugFlag,
 }
 
-// Flags contains the list of configuration options available to the binary.
 var Flags = append(requiredFlags, optionalFlags...)
