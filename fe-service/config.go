@@ -1,7 +1,7 @@
 package fe_service
 
 import (
-	"github.com/savour-labs/fieryeyes/indexer/flags"
+	"github.com/savour-labs/fieryeyes/fe-service/flags"
 	"github.com/urfave/cli"
 	"time"
 )

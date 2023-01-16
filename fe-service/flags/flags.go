@@ -48,6 +48,25 @@ var (
 		Required: true,
 		EnvVar:   prefixEnvVar("DB_NAME"),
 	}
+	ApiServicePortFlag = cli.Uint64Flag{
+		Name:   "api-service-port",
+		Usage:  "The port of the RPC server",
+		Value:  8080,
+		EnvVar: prefixEnvVar("API_SERVICE_PORT"),
+	}
+	IndexerRPCHostNameFlag = cli.StringFlag{
+		Name:   "indexer-rpc-hostname",
+		Usage:  "The hostname of indexer RPC server",
+		Value:  "127.0.0.1",
+		EnvVar: prefixEnvVar("INDEXER_RPC_HOST_NAME"),
+	}
+	IndexerRPCPortFlag = cli.Uint64Flag{
+		Name:   "indexer-rpc-port",
+		Usage:  "The port of the indexer RPC server",
+		Value:  8080,
+		EnvVar: prefixEnvVar("INDEXER_RPC_PORT"),
+	}
+
 	RPCHostNameFlag = cli.StringFlag{
 		Name:   "RPC-hostname",
 		Usage:  "The hostname of the RPC server",
@@ -91,6 +110,11 @@ var (
 		Value:  7300,
 		EnvVar: prefixEnvVar("METRICS_PORT"),
 	}
+	EchoDebugFlag = cli.BoolFlag{
+		Name:   "echo-debug",
+		Usage:  "Echo log debug",
+		EnvVar: prefixEnvVar("ECHO_DEBUG"),
+	}
 )
 
 var requiredFlags = []cli.Flag{
@@ -100,6 +124,9 @@ var requiredFlags = []cli.Flag{
 	DBPortFlag,
 	DBPasswordFlag,
 	DBNameFlag,
+	ApiServicePortFlag,
+	IndexerRPCHostNameFlag,
+	IndexerRPCPortFlag,
 	RPCHostNameFlag,
 	RPCPortFlag,
 }
@@ -110,6 +137,7 @@ var optionalFlags = []cli.Flag{
 	MetricsServerEnableFlag,
 	MetricsHostnameFlag,
 	MetricsPortFlag,
+	EchoDebugFlag,
 }
 
 var Flags = append(requiredFlags, optionalFlags...)
