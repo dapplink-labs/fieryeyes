@@ -22,10 +22,10 @@ type FeServiceIndexer struct {
 }
 
 func NewFeServiceIndexer(ctx context.Context, cfg *FeServiceIndexerConfig) (*FeServiceIndexer, error) {
-	ctxt, cancel := context.WithTimeout(ctx, common.DefaultTimeout)
+	_, cancel := context.WithTimeout(ctx, common.DefaultTimeout)
 	defer cancel()
 	return &FeServiceIndexer{
-		Ctx:    ctxt,
+		Ctx:    ctx,
 		Cfg:    cfg,
 		Cancel: cancel,
 	}, nil

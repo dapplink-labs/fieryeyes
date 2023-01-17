@@ -27,6 +27,7 @@ else
     protoc -I ./ --go_out=./ --go-grpc_out=./ ./scrapy.proto
     protoc -I ./ --go_out=./ --go-grpc_out=./ ./indexer.proto
     protoc -I ./ --go_out=./ --go-grpc_out=./ ./law.proto
+    protoc -I ./ --go_out=./ --go-grpc_out=./ ./services.proto
 
     exit_if $?
     echo Done

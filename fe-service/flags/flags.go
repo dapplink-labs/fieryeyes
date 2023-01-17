@@ -35,7 +35,6 @@ var (
 		Required: true,
 		EnvVar:   prefixEnvVar("DB_PORT"),
 	}
-
 	DBPasswordFlag = cli.StringFlag{
 		Name:     "db-password",
 		Usage:    "Password of the database connection",

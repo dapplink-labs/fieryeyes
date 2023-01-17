@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-option go_package ="../indexer/protobuf";
-package indexer.protobuf;
+option go_package ="../fe-service/protobuf";
+package fe_service.protobuf;
 
 enum ReturnCode{
   SUCCESS = 0;
@@ -33,7 +33,7 @@ message NftInfoReq {
   string token_id = 2;
 }
 
-message Collections {
+message NftInfoRep {
   ReturnCode code=1;
   string msg=2;
 }
@@ -41,7 +41,7 @@ message Collections {
 service InternalRpcService {
   rpc GetAddressInfo(AddressInfoReq) returns (AddressInfoRep) {}
   rpc GetNftCollectionsInfo(NftCollectionsInfoReq) returns (NftCollectionsInfoRep) {}
-  rpc GetNftInfo(NftInfoReq) returns (Collections) {}
+  rpc GetNftInfo(NftInfoReq) returns (NftInfoRep) {}
 }
 
 

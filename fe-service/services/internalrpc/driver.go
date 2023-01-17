@@ -4,9 +4,8 @@ import (
 	"context"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/savour-labs/fieryeyes/fe-service/db"
-	chain "github.com/savour-labs/fieryeyes/indexer/blockchain"
-	"github.com/savour-labs/fieryeyes/indexer/models"
-	"github.com/savour-labs/fieryeyes/indexer/protobuf"
+	"github.com/savour-labs/fieryeyes/fe-service/protobuf"
+	"github.com/savour-labs/fieryeyes/fe-service/services/common"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/reflection"
@@ -18,7 +17,9 @@ import (
 )
 
 type IInternalRpcServices interface {
-	GetLatestBlock(ctx context.Context, req *protobuf.LatestBlock) (*protobuf.LatestBlockRep, error)
+	GetAddressInfo(ctx context.Context, req *protobuf.AddressInfoReq) (*protobuf.AddressInfoRep, error)
+	GetNftCollectionsInfo(ctx context.Context, req *protobuf.NftCollectionsInfoReq) (*protobuf.NftCollectionsInfoRep, error)
+	GetNftInfo(ctx context.Context, req *protobuf.NftInfoReq) (*protobuf.NftInfoRep, error)
 }
 
 type CommonRequest interface {
@@ -40,7 +41,7 @@ type InternalRpcServices struct {
 }
 
 func NewIndexerRPCServices(ctx context.Context, cfg *InternalRpcConfig) (*InternalRpcServices, error) {
-	ctxt, cancel := context.WithTimeout(ctx, chain.DefaultTimeout)
+	ctxt, cancel := context.WithTimeout(ctx, common.DefaultTimeout)
 	defer cancel()
 	return &InternalRpcServices{
 		Ctx:    ctxt,
@@ -49,20 +50,24 @@ func NewIndexerRPCServices(ctx context.Context, cfg *InternalRpcConfig) (*Intern
 	}, nil
 }
 
-func (rpc *InternalRpcServices) GetLatestBlock(ctx context.Context, req *protobuf.LatestBlock) (*protobuf.LatestBlockRep, error) {
-	var blocks models.Blocks
-	block, err := blocks.GetFirstColumn(rpc.Cfg.Database.Db)
-	if err != nil {
-		log.Error("get db block number fail", "err", err)
-		return &protobuf.LatestBlockRep{
-			Code: protobuf.ReturnCode_SUCCESS,
-			Msg:  "get latest block number fail",
-		}, nil
-	}
-	return &protobuf.LatestBlockRep{
-		Code:        protobuf.ReturnCode_SUCCESS,
-		Msg:         "request success",
-		BlockNumber: block.LatestBlockHeight,
+func (rpc *InternalRpcServices) GetAddressInfo(ctx context.Context, req *protobuf.AddressInfoReq) (*protobuf.AddressInfoRep, error) {
+	return &protobuf.AddressInfoRep{
+		Code: protobuf.ReturnCode_SUCCESS,
+		Msg:  "request address success",
+	}, nil
+}
+
+func (rpc *InternalRpcServices) GetNftCollectionsInfo(ctx context.Context, req *protobuf.NftCollectionsInfoReq) (*protobuf.NftCollectionsInfoRep, error) {
+	return &protobuf.NftCollectionsInfoRep{
+		Code: protobuf.ReturnCode_SUCCESS,
+		Msg:  "request nft collection success",
+	}, nil
+}
+
+func (rpc *InternalRpcServices) GetNftInfo(ctx context.Context, req *protobuf.NftInfoReq) (*protobuf.NftInfoRep, error) {
+	return &protobuf.NftInfoRep{
+		Code: protobuf.ReturnCode_SUCCESS,
+		Msg:  "request nft success",
 	}, nil
 }
 
@@ -87,7 +92,7 @@ func (rpc *InternalRpcServices) Start() error {
 	defer rpc.wg.Done()
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(rpc.interceptor))
 	defer grpcServer.GracefulStop()
-	protobuf.RegisterIndexerRpcServiceServer(grpcServer, rpc)
+	protobuf.RegisterInternalRpcServiceServer(grpcServer, rpc)
 	listen, err := net.Listen("tcp", ":"+rpc.Cfg.RpcPort)
 	if err != nil {
 		log.Error("net listen failed", "err", err)

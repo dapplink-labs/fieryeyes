@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/savour-labs/fieryeyes/fe-service/db"
-	"github.com/savour-labs/fieryeyes/fe-service/metrics"
 	"github.com/savour-labs/fieryeyes/fe-service/services/indexer"
 	"github.com/savour-labs/fieryeyes/fe-service/services/internalrpc"
 	"github.com/savour-labs/fieryeyes/fe-service/services/openapi"
@@ -50,7 +49,7 @@ type FeService struct {
 	internalRpcServices *internalrpc.InternalRpcServices
 	feServiceIndexer    *indexer.FeServiceIndexer
 	db                  *db.Database
-	metrics             *metrics.Metrics
+	// metrics             *metrics.Metrics
 }
 
 func NewFeService(cfg Config) (*FeService, error) {
@@ -86,7 +85,7 @@ func NewFeService(cfg Config) (*FeService, error) {
 		return nil, err
 	}
 	apiConfig := &openapi.ApiConfig{
-		ApiServicePort: cfg.ApiServicePort,
+		ApiServicePort: int(cfg.ApiServicePort),
 		Debug:          cfg.EchoDebug,
 		Database:       dbSelf,
 	}
@@ -96,17 +95,17 @@ func NewFeService(cfg Config) (*FeService, error) {
 		return nil, err
 	}
 
-	m := metrics.NewMetrics()
+	// m := metrics.NewMetrics()
 
-	if cfg.MetricsServerEnable {
-		go func() {
-			_, err := m.Serve(cfg.MetricsHostname, cfg.MetricsPort)
-			if err != nil {
-				log.Error("metrics server failed to start", "err", err)
-			}
-		}()
-		log.Info("metrics server enabled", "host", cfg.MetricsHostname, "port", cfg.MetricsPort)
-	}
+	//if cfg.MetricsServerEnable {
+	//	go func() {
+	//		_, err := m.Serve(cfg.MetricsHostname, cfg.MetricsPort)
+	//		if err != nil {
+	//			log.Error("metrics server failed to start", "err", err)
+	//		}
+	//	}()
+	//	log.Info("metrics server enabled", "host", cfg.MetricsHostname, "port", cfg.MetricsPort)
+	//}
 
 	iRpcConfig := &internalrpc.InternalRpcConfig{
 		RpcHost:  cfg.RpcHost,
@@ -121,7 +120,7 @@ func NewFeService(cfg Config) (*FeService, error) {
 
 	feServiceConfig := &indexer.FeServiceIndexerConfig{
 		IndexerRpcHost: cfg.IndexerRpcHost,
-		IndexerRpcPort: cfg.IndexerRpcPort,
+		IndexerRpcPort: int64(cfg.IndexerRpcPort),
 		LoopInterval:   cfg.LoopInterval,
 	}
 
@@ -137,7 +136,7 @@ func NewFeService(cfg Config) (*FeService, error) {
 		internalRpcServices: iRpcServices,
 		feServiceIndexer:    feService,
 		db:                  dbSelf,
-		metrics:             m,
+		// metrics:             m,
 	}, nil
 
 }

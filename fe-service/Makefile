@@ -7,11 +7,11 @@ LDFLAGSSTRING +=-X main.GitDate=$(GITDATE)
 LDFLAGSSTRING +=-X main.GitVersion=$(GITVERSION)
 LDFLAGS := -ldflags "$(LDFLAGSSTRING)"
 
-indexer:
-	env GO111MODULE=on go build -v $(LDFLAGS) ./cmd/indexer
+fe-service:
+	env GO111MODULE=on go build -v $(LDFLAGS) ./cmd/fe-service
 
 clean:
-	rm indexer
+	rm fe-service
 
 test:
 	go test -v ./...
@@ -21,7 +21,7 @@ lint:
 
 
 .PHONY: \
-	indexer \
+	fe-service \
 	binding \
 	clean \
 	test \
