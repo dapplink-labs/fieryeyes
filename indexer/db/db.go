@@ -38,7 +38,7 @@ func NewDatabase(ctx context.Context, cfg *DatabaseConfig) (*Database, error) {
 }
 
 func (d *Database) MigrateDb() error {
-	if err := d.Db.AutoMigrate(&models.Blocks{}); err != nil {
+	if err := d.Db.AutoMigrate(&models.Addresses{}, &models.AddressToken{}, &models.Blocks{}, &models.Token{}, &models.Transaction{}); err != nil {
 		log.WithError(err).Fatal("Failed to migrate database")
 		return err
 	}

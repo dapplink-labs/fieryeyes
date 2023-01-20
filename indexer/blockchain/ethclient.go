@@ -67,6 +67,7 @@ func NewEvmChainClient(ctx context.Context, cfg *EvmChainConfig) (*EvmChainClien
 func (ecc *EvmChainClient) InitBlock() error {
 	var blocks models.Blocks
 	latestBlock, err := ecc.EthClient.BlockNumber(ecc.Ctx)
+	log.Info("latestBlock", "latestBlock", latestBlock)
 	if err != nil {
 		log.Error("get latest block number fail", "err", err)
 		return err
@@ -97,16 +98,73 @@ func (ecc *EvmChainClient) ProcessBlock(block *types.Block) error {
 			BlockNumber: block.Number().Uint64(),
 			TxHash:      tx.Hash().Hex(),
 			From:        from.Hex(),
+			Value:       tx.Value().String(),
 			Timestamp:   time.Unix(int64(block.Time()), 0),
 			InputData:   tx.Data(),
 		}
 		if tx.To() == nil {
 			log.Info("Contract creation found", "Sender", transaction.From, "TxHash", transaction.TxHash)
-			transaction.Contract = crypto.CreateAddress(from, tx.Nonce()).Hex()
-			// todo: hand contract create
+			toAddress := crypto.CreateAddress(from, tx.Nonce()).Hex()
+			transaction.Contract = toAddress
+			token := &models.Token{
+				Address: toAddress,
+			}
+			err = token.SelfInsert(ecc.Cfg.Database.Db)
+			if err != nil {
+				log.Error("insert transaction fail", "err", err)
+				return err
+			}
 		} else {
+			// to is contract, call contract
+			to := tx.To().String()
+			token := &models.Token{
+				Address: to,
+			}
+			ok := token.ExistToken(ecc.Cfg.Database.Db)
+			if ok {
+				token.TotalTransactions += 1
+				err = token.SelfUpdate(ecc.Cfg.Database.Db)
+				if err != nil {
+					log.Error("token update fail", "err", err)
+					return err
+				}
+			} else {
+				address := &models.Addresses{
+					Address: to,
+				}
+				ok := address.ExistAddress(ecc.Cfg.Database.Db)
+				if !ok {
+					newAddress := models.Addresses{
+						Address: tx.To().String(),
+						Balance: tx.Value().String(),
+					}
+					err := newAddress.SelfInsert(ecc.Cfg.Database.Db)
+					if err != nil {
+						log.Error("address insert fail", "err", err)
+						return err
+					}
+				} else {
+					bigInt := new(big.Int)
+					sBalance, ok := bigInt.SetString(address.Balance, 10)
+					if !ok {
+						log.Error("string to big int fail", "err", err)
+						return err
+					}
+					newBalance := new(big.Int).Add(sBalance, tx.Value())
+					address.Balance = newBalance.String()
+					err := address.SelfUpdate(ecc.Cfg.Database.Db)
+					if err != nil {
+						log.Error("update balance fail", "err", err)
+						return err
+					}
+				}
+			}
 			transaction.Contract = tx.To().Hex()
-			// todo: hand contract call
+		}
+		err = transaction.SelfInsert(ecc.Cfg.Database.Db)
+		if err != nil {
+			log.Error("insert transaction fail", "err", err)
+			return err
 		}
 	}
 	return nil
