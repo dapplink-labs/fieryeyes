@@ -13,6 +13,7 @@ type Transaction struct {
 	To          string    `gorm:"type:char(42)" json:"to"`
 	Value       string    `gorm:"type:varchar(256)" json:"value"`
 	Contract    string    `gorm:"type:char(42)" json:"contract"`
+	Status      uint64    `json:"status"`
 	Timestamp   time.Time `json:"timestamp"`
 	InputData   []byte    `gorm:"-" json:"input_data"`
 	*gorm.Model

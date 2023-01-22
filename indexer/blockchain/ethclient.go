@@ -88,84 +88,109 @@ func (ecc *EvmChainClient) InitBlock() error {
 
 func (ecc *EvmChainClient) ProcessBlock(block *types.Block) error {
 	for _, tx := range block.Transactions() {
-		from, err := types.Sender(types.LatestSignerForChainID(tx.ChainId()), tx)
+		receipt, err := ecc.EthClient.TransactionReceipt(ecc.Ctx, tx.Hash())
 		if err != nil {
-			log.Error("Failed to read the sender address", "TxHash", tx.Hash(), "err", err)
-			return err
+			log.Error("get transaction fail", "err", err)
 		}
-		log.Info("hand transaction", "txHash", tx.Hash().String())
-		transaction := &models.Transaction{
-			BlockNumber: block.Number().Uint64(),
-			TxHash:      tx.Hash().Hex(),
-			From:        from.Hex(),
-			Value:       tx.Value().String(),
-			Timestamp:   time.Unix(int64(block.Time()), 0),
-			InputData:   tx.Data(),
-		}
-		if tx.To() == nil {
-			log.Info("Contract creation found", "Sender", transaction.From, "TxHash", transaction.TxHash)
-			toAddress := crypto.CreateAddress(from, tx.Nonce()).Hex()
-			transaction.Contract = toAddress
-			token := &models.Token{
-				Address: toAddress,
-			}
-			err = token.SelfInsert(ecc.Cfg.Database.Db)
+		for _, rLog := range receipt.Logs {
+			err = ecc.ProcessTransactionEvent(rLog, receipt.Status)
 			if err != nil {
-				log.Error("insert transaction fail", "err", err)
-				return err
+				log.Error("process transaction event fail", "err", err)
 			}
-		} else {
-			// to is contract, call contract
-			to := tx.To().String()
-			token := &models.Token{
-				Address: to,
-			}
-			ok := token.ExistToken(ecc.Cfg.Database.Db)
-			if ok {
-				token.TotalTransactions += 1
-				err = token.SelfUpdate(ecc.Cfg.Database.Db)
-				if err != nil {
-					log.Error("token update fail", "err", err)
-					return err
-				}
-			} else {
-				address := &models.Addresses{
-					Address: to,
-				}
-				ok := address.ExistAddress(ecc.Cfg.Database.Db)
-				if !ok {
-					newAddress := models.Addresses{
-						Address: tx.To().String(),
-						Balance: tx.Value().String(),
-					}
-					err := newAddress.SelfInsert(ecc.Cfg.Database.Db)
-					if err != nil {
-						log.Error("address insert fail", "err", err)
-						return err
-					}
-				} else {
-					bigInt := new(big.Int)
-					sBalance, ok := bigInt.SetString(address.Balance, 10)
-					if !ok {
-						log.Error("string to big int fail", "err", err)
-						return err
-					}
-					newBalance := new(big.Int).Add(sBalance, tx.Value())
-					address.Balance = newBalance.String()
-					err := address.SelfUpdate(ecc.Cfg.Database.Db)
-					if err != nil {
-						log.Error("update balance fail", "err", err)
-						return err
-					}
-				}
-			}
-			transaction.Contract = tx.To().Hex()
 		}
-		err = transaction.SelfInsert(ecc.Cfg.Database.Db)
+		err = ecc.ProcessTransaction(tx, block.Time(), block.Number(), receipt.Status)
+		if err != nil {
+			log.Error("process transaction fail", "err", err)
+		}
+		// todo internal transaction handle
+	}
+	return nil
+}
+
+func (ecc *EvmChainClient) ProcessTransactionEvent(rLog *types.Log, status uint64) error {
+	log.Info("ProcessTransactionEvent", "address", rLog.Address, "data", rLog.Data)
+	// todo: handle erc20 erc721 and erc1155 transaction
+	return nil
+}
+
+func (ecc *EvmChainClient) ProcessTransaction(tx *types.Transaction, blockTime uint64, blockNumber *big.Int, status uint64) error {
+	from, err := types.Sender(types.LatestSignerForChainID(tx.ChainId()), tx)
+	if err != nil {
+		log.Error("Failed to read the sender address", "TxHash", tx.Hash(), "err", err)
+		return err
+	}
+	log.Info("hand transaction", "txHash", tx.Hash().String())
+	transaction := &models.Transaction{
+		BlockNumber: blockNumber.Uint64(),
+		TxHash:      tx.Hash().Hex(),
+		From:        from.Hex(),
+		Value:       tx.Value().String(),
+		Status:      status,
+		Timestamp:   time.Unix(int64(blockTime), 0),
+		InputData:   tx.Data(),
+	}
+	if tx.To() == nil {
+		log.Info("Contract creation found", "Sender", transaction.From, "TxHash", transaction.TxHash)
+		toAddress := crypto.CreateAddress(from, tx.Nonce()).Hex()
+		transaction.Contract = toAddress
+		token := &models.Token{
+			Address: toAddress,
+		}
+		err = token.SelfInsert(ecc.Cfg.Database.Db)
 		if err != nil {
 			log.Error("insert transaction fail", "err", err)
 			return err
 		}
+	} else {
+		to := tx.To().String()
+		token := &models.Token{
+			Address: to,
+		}
+		ok := token.ExistToken(ecc.Cfg.Database.Db)
+		if ok { // to is contract, call contract
+			token.TotalTransactions += 1
+			err = token.SelfUpdate(ecc.Cfg.Database.Db)
+			if err != nil {
+				log.Error("token update fail", "err", err)
+				return err
+			}
+		} else { // to is not contract, normal transaction
+			address := &models.Addresses{
+				Address: to,
+			}
+			ok := address.ExistAddress(ecc.Cfg.Database.Db)
+			if !ok {
+				newAddress := models.Addresses{
+					Address: tx.To().String(),
+					Balance: tx.Value().String(),
+				}
+				err := newAddress.SelfInsert(ecc.Cfg.Database.Db)
+				if err != nil {
+					log.Error("address insert fail", "err", err)
+					return err
+				}
+			} else {
+				bigInt := new(big.Int)
+				sBalance, ok := bigInt.SetString(address.Balance, 10)
+				if !ok {
+					log.Error("string to big int fail", "err", err)
+					return err
+				}
+				newBalance := new(big.Int).Add(sBalance, tx.Value())
+				address.Balance = newBalance.String()
+				err := address.SelfUpdate(ecc.Cfg.Database.Db)
+				if err != nil {
+					log.Error("update balance fail", "err", err)
+					return err
+				}
+			}
+		}
+		transaction.Contract = tx.To().Hex()
+	}
+	err = transaction.SelfInsert(ecc.Cfg.Database.Db)
+	if err != nil {
+		log.Error("insert transaction fail", "err", err)
+		return err
 	}
 	return nil
 }
@@ -215,13 +240,21 @@ func (ecc *EvmChainClient) SyncLoop() {
 				log.Info("process block fail", "err", err)
 				return
 			}
-			block.LatestBlockHeight = latestBlock
-			block.BlockHeight = block.BlockHeight + 1
+			block.BlockHash = tBlock.Hash().String()
 			err = block.SelfUpdate(ecc.Cfg.Database.Db)
 			if err != nil {
-				log.Error("update block and last block height fail", "err", err)
+				log.Error("update block hash fail", "err", err)
 			}
-
+			newBlock := models.Blocks{
+				BlockHeight:       block.BlockHeight + 1,
+				BlockHash:         "",
+				ParentHash:        tBlock.ParentHash().String(),
+				LatestBlockHeight: latestBlock,
+			}
+			err = newBlock.SelfInsert(ecc.Cfg.Database.Db)
+			if err != nil {
+				log.Error("insert new block fail", "err", err)
+			}
 		case err := <-ecc.Ctx.Done():
 			log.Error("Sync loop exit, fail reason", "err", err)
 			return

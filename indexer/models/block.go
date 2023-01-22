@@ -7,6 +7,8 @@ import (
 type Blocks struct {
 	Id                int64  `json:"id" gorm:"primary_key;AUTO_INCREMENT"`
 	BlockHeight       uint64 `json:"block_height" gorm:"column:block_height;default: 0;"`
+	BlockHash         string `json:"block_hash" gorm:"column:block_hash;default: '';"`
+	ParentHash        string `json:"parent_hash" gorm:"column:parent_hash;default: '';"`
 	LatestBlockHeight uint64 `json:"latest_block_height" gorm:"column:latest_block_height;default: 0;"`
 	*gorm.Model
 }
@@ -31,7 +33,7 @@ func (b *Blocks) SelfUpdate(db *gorm.DB) error {
 
 func (b *Blocks) GetFirstColumn(db *gorm.DB) (*Blocks, error) {
 	var block *Blocks
-	if err := db.First(&block).Error; err != nil {
+	if err := db.Order("id desc").First(&block).Error; err != nil {
 		return nil, err
 	}
 	return block, nil
