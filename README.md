@@ -34,6 +34,8 @@ Fieryeyes is a project that integrates NFT data capture, NFT digital rule sortin
 - savs: project script.
 - specs:project specs.
 
+![nft-data-1.png](https://github.com/savour-labs/savour-docs-chinese/blob/main/images/nft-data-1.png)
+
 ## Installation
 
 For prerequisites and detailed build instructions please read the [Installation](https://github.com/savour-labs/fieryeyes/) instructions. Once the dependencies are installed, run:
