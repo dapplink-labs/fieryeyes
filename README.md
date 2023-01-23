@@ -17,9 +17,6 @@ parent:
   <a href="https://pkg.go.dev/github.com/savour-labs/fieryeyes">
     <img alt="GoDoc" src="https://godoc.org/github.com/savour-labs/fieryeyes?status.svg" />
   </a>
-  <a href="https://goreportcard.com/report/github.com/savour-labs/fieryeyes">
-    <img alt="Go report card" src="https://goreportcard.com/badge/github.com/savour-labs/fieryeyes"/>
-  </a>
 </div>
 
 Fieryeyes is a project that integrates NFT data capture, NFT digital rule sorting and NFT recommendation
