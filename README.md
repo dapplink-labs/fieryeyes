@@ -67,10 +67,10 @@ git clone git@github.com:savour-labs/fieryeyes.git
 cd indexer
 ```
 
-2. do module development
+2.do module development
 
 
-3. build and start
+3.build and start
 
 before you start up, you should change your evn.
 
@@ -83,6 +83,8 @@ source .evn
 ```
 ./indexer
 ```
+
+4.The same goes for other modules, such as `fe-law`, `fe-service` and `fe-scrapy`
 
 ## Contributing
 
