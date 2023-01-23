@@ -42,13 +42,16 @@ Fieryeyes is a project that integrates NFT data capture, NFT digital rule sortin
 For prerequisites and detailed build instructions please read the [Installation](https://github.com/savour-labs/fieryeyes/) instructions. Once the dependencies are installed, run:
 
 ```bash
-make install
+make build
 ```
 
 Or check out the latest [release](https://github.com/savour-labs/fieryeyes).
 
 ## Quick Start
 
+```bash
+make up
+```
 
 ## Community
 
