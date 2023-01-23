@@ -88,4 +88,6 @@ source .evn
 
 ## Contributing
 
+Read through CONTRIBUTING.md for a general overview of our contribution process. Then check out our list of good first issues to find something fun to work on!
+
 
