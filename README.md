@@ -74,15 +74,15 @@ cd indexer
 
 before you start up, you should change your evn.
 
-'''
+```
 make indexer
-'''
-'''
+```
+```
 source .evn
-'''
-'''
+```
+```
 ./indexer
-'''
+```
 
 ## Contributing
 
