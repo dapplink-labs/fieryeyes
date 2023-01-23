@@ -53,7 +53,32 @@ Or check out the latest [release](https://github.com/savour-labs/fieryeyes).
 make up
 ```
 
-## Community
+## Module development
+
+### indexer
+
+1.clone project
+
+```
+git clone git@github.com:savour-labs/fieryeyes.git
+```
+
+```
+cd indexer
+```
+
+2. do module development
+
+
+3. build and start
+
+before you start up, you should change your evn.
+
+'''
+make indexer
+source .evn
+./indexer
+'''
 
 
 ## Contributing
