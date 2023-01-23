@@ -102,14 +102,44 @@ func (ecc *EvmChainClient) ProcessBlock(block *types.Block) error {
 		if err != nil {
 			log.Error("process transaction fail", "err", err)
 		}
-		// todo internal transaction handle
 	}
 	return nil
 }
 
 func (ecc *EvmChainClient) ProcessTransactionEvent(rLog *types.Log, status uint64) error {
 	log.Info("ProcessTransactionEvent", "address", rLog.Address, "data", rLog.Data)
-	// todo: handle erc20 erc721 and erc1155 transaction
+	event := &models.Events{
+		Address:     rLog.Address.String(),
+		Data:        "",
+		BlockNumber: rLog.BlockNumber,
+		TxHash:      rLog.TxHash.String(),
+		TxIndex:     rLog.TxIndex,
+		BlockHash:   rLog.BlockHash.String(),
+		LogIndex:    rLog.Index,
+		Removed:     rLog.Removed,
+	}
+	err := event.SelfInsert(ecc.Cfg.Database.Db)
+	if err != nil {
+		log.Error("insert event fail", "err", err)
+		return err
+	}
+	evt, err := event.GetEventByTxHash(ecc.Cfg.Database.Db)
+	if err != nil {
+		log.Error("get event by tx hash fail", "err", err)
+		return err
+	}
+	log.Info("Topics", "topic", rLog.Topics)
+	for _, tp := range rLog.Topics {
+		topic := &models.Topics{
+			EventId: evt.Id,
+			Topic:   tp.String(),
+		}
+		err := topic.SelfInsert(ecc.Cfg.Database.Db)
+		if err != nil {
+			log.Error("insert topic fail", "err", err)
+			return err
+		}
+	}
 	return nil
 }
 
