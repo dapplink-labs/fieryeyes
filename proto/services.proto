@@ -8,6 +8,13 @@ enum ReturnCode{
   ERROR = 1;
 }
 
+message AddressToken {
+  string token_address = 1;
+  string token_name = 2;
+  string hold_value = 3;
+  uint64 hold_num = 4;
+}
+
 message AddressInfoReq {
   string consumer_token = 1;
   string address = 2;
@@ -16,6 +23,10 @@ message AddressInfoReq {
 message AddressInfoRep {
   ReturnCode code=1;
   string msg=2;
+  string address = 3;
+  string label = 4;
+  string balance = 5;
+  repeated AddressToken address_token = 6;
 }
 
 message NftCollectionsInfoReq {
@@ -24,8 +35,14 @@ message NftCollectionsInfoReq {
 }
 
 message NftCollectionsInfoRep {
-  ReturnCode code=1;
-  string msg=2;
+  ReturnCode code = 1;
+  string msg = 2;
+  string average_value = 3;
+  uint64 average_txn = 4;
+  uint64 daily_txn = 5;
+  uint64 total_holder_address = 6;
+  string average_txn_price = 7;
+  string daily_txn_price = 8;
 }
 
 message NftInfoReq {
@@ -34,8 +51,13 @@ message NftInfoReq {
 }
 
 message NftInfoRep {
-  ReturnCode code=1;
-  string msg=2;
+  ReturnCode code = 1;
+  string msg = 2;
+  uint64 total_txn = 3;
+  uint64 daily_txn = 4;
+  string latest_price = 5;
+  string average_txn_price = 7;
+  string daily_txn_price = 8;
 }
 
 service InternalRpcService {
