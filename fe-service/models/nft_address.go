@@ -4,9 +4,9 @@ import (
 	"gorm.io/gorm"
 )
 
-type DailyAddress struct {
+type NftAddress struct {
 	Id        uint64 `json:"id" gorm:"primary_key;AUTO_INCREMENT"`
+	NftId     uint64 `json:"nft_id"`
 	AddressId uint64 `json:"address_id"`
-	Balance   string `gorm:"type:varchar(256)"  json:"balance"`
 	*gorm.Model
 }

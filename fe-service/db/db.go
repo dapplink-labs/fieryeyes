@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
-	"github.com/savour-labs/fieryeyes/indexer/models"
+	"github.com/savour-labs/fieryeyes/fe-service/models"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -38,7 +38,14 @@ func NewDatabase(ctx context.Context, cfg *DatabaseConfig) (*Database, error) {
 }
 
 func (d *Database) MigrateDb() error {
-	if err := d.Db.AutoMigrate(&models.Blocks{}); err != nil {
+	if err := d.Db.AutoMigrate(
+		&models.Addresses{},
+		&models.Collection{},
+		&models.DailyAddress{},
+		&models.Nft{},
+		models.NftAddress{},
+		models.NftDaily{},
+	); err != nil {
 		log.WithError(err).Fatal("Failed to migrate database")
 		return err
 	}
