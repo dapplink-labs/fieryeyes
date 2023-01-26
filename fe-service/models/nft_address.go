@@ -10,3 +10,21 @@ type NftAddress struct {
 	AddressId uint64 `json:"address_id"`
 	*gorm.Model
 }
+
+func (na *NftAddress) TableName() string {
+	return "nft_address"
+}
+
+func (na *NftAddress) SelfInsert(db *gorm.DB) error {
+	if err := db.Create(&na).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (na *NftAddress) SelfUpdate(db *gorm.DB) error {
+	if err := db.Updates(&na).Error; err != nil {
+		return err
+	}
+	return nil
+}

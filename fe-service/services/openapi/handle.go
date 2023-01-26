@@ -2,7 +2,9 @@ package openapi
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/savour-labs/fieryeyes/fe-service/models"
 	"github.com/savour-labs/fieryeyes/fe-service/services/common"
+	"github.com/savour-labs/fieryeyes/fe-service/services/openapi/types"
 	"net/http"
 )
 
@@ -12,35 +14,106 @@ const (
 	SelfInvalidParams = 4001
 )
 
-type NftCollectsRequest struct {
-	TokenAddress string `json:"token_address"`
-}
-
-type NftRequest struct {
-	TokenId int64 `json:"token_id"`
-}
-
 func (as *ApiService) GetAddressInfo(c echo.Context) error {
-	retValue := common.BaseResource(true, SelfServiceOK, "address info", "get address info success")
+	var addrReq types.AddressReq
+	if err := c.Bind(&addrReq); err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "invalid request params")
+		return c.JSON(http.StatusOK, retValue)
+	}
+	address := &models.Addresses{
+		Id: addrReq.AddressId,
+	}
+	dbAddress, err := address.GetAddressById(as.Cfg.Database.Db)
+	if err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "no this address in system")
+		return c.JSON(http.StatusOK, retValue)
+	}
+	addrDaily := &models.DailyAddress{
+		AddressId: addrReq.AddressId,
+	}
+	addressDailyList, _ := addrDaily.GetDailyAddressListById(addrReq.DailyPage, addrReq.DailyPageSize, as.Cfg.Database.Db)
+	var addressDailyArray []types.AddressDaily
+	for _, key := range addressDailyList {
+		addressDailyArray = append(
+			addressDailyArray,
+			types.AddressDaily{
+				AddressId:  key.AddressId,
+				Balance:    key.Balance,
+				TokenValue: key.TokenValue,
+				NftValue:   key.NftValue,
+				DateTime:   key.DateTime,
+			},
+		)
+	}
+	resultRet := &types.AddressInfoRep{
+		Id:               dbAddress.Id,
+		Address:          dbAddress.Address,
+		Label:            dbAddress.Label,
+		IsGiantWhale:     dbAddress.IsGiantWhale,
+		Balance:          dbAddress.Balance,
+		TokenValue:       dbAddress.TokenValue,
+		NftValue:         dbAddress.NftValue,
+		AddressDailyList: addressDailyArray,
+	}
+	retValue := common.BaseResource(true, SelfServiceOK, resultRet, "get address info success")
 	return c.JSON(http.StatusOK, retValue)
 }
 
 func (as *ApiService) GetNftCollectionsInfo(c echo.Context) error {
-	var rsReq NftCollectsRequest
-	if err := c.Bind(&rsReq); err != nil {
+	var collectionReq types.CollectionReq
+	if err := c.Bind(&collectionReq); err != nil {
 		retValue := common.BaseResource(false, SelfInvalidParams, nil, "params format error")
 		return c.JSON(http.StatusOK, retValue)
 	}
-	retValue := common.BaseResource(true, SelfServiceOK, "Nft collections", "get nft collections success")
+	collection := &models.Collection{
+		Address: collectionReq.TokenAddress,
+	}
+	dbCollection, err := collection.GetCollectionById(as.Cfg.Database.Db)
+	if err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "no this collection in system")
+		return c.JSON(http.StatusOK, retValue)
+	}
+	collectionDaily := &models.CollectionDaily{
+		CollectionId: dbCollection.Id,
+	}
+	cltDailyList, _ := collectionDaily.GetDailyCollectionListById(collectionReq.DailyPage, collectionReq.DailyPageSize, as.Cfg.Database.Db)
+	var cltDailyArray []types.CollectionDailyList
+	for _, key := range cltDailyList {
+		cltDailyArray = append(
+			cltDailyArray,
+			types.CollectionDailyList{
+				TotalHolder:             key.TotalHolder,
+				AverageHolder:           key.AverageHolder,
+				TotalGiantWhaleHolder:   key.TotalGiantWhaleHolder,
+				AverageGiantWhaleHolder: key.AverageGiantWhaleHolder,
+				TotalTxn:                key.TotalTxn,
+				AverageTxn:              key.AverageTxn,
+				AveragePrice:            key.AveragePrice,
+				TotalPrice:              key.TotalPrice,
+				DateTime:                key.DateTime,
+			},
+		)
+	}
+	resultRet := &types.CollectionInfo{
+		Name:                    dbCollection.Name,
+		Address:                 dbCollection.Address,
+		Introduce:               dbCollection.Introduce,
+		TotalHolder:             dbCollection.TotalHolder,
+		AverageHolder:           dbCollection.AverageHolder,
+		TotalGiantWhaleHolder:   dbCollection.TotalGiantWhaleHolder,
+		AverageGiantWhaleHolder: dbCollection.AverageGiantWhaleHolder,
+		TotalTxn:                dbCollection.TotalTxn,
+		AverageTxn:              dbCollection.AverageTxn,
+		AveragePrice:            dbCollection.AveragePrice,
+		TotalPrice:              dbCollection.TotalPrice,
+		SuggestLevel:            dbCollection.SuggestLevel,
+		CollectionDaily:         cltDailyArray,
+	}
+	retValue := common.BaseResource(true, SelfServiceOK, resultRet, "get address info success")
 	return c.JSON(http.StatusOK, retValue)
 }
 
 func (as *ApiService) GetNftInfo(c echo.Context) error {
-	var txReq NftRequest
-	if err := c.Bind(&txReq); err != nil {
-		retValue := common.BaseResource(false, SelfInvalidParams, nil, "Params format error")
-		return c.JSON(http.StatusOK, retValue)
-	}
 	retValue := common.BaseResource(true, SelfServiceOK, "nft info", "get nft info success")
 	return c.JSON(http.StatusOK, retValue)
 }
