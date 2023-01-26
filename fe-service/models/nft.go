@@ -16,3 +16,21 @@ type Nft struct {
 	SuggestLevel          uint8  `json:"suggest_level" gorm:"column:suggest_level;default: 0;"`
 	*gorm.Model
 }
+
+func (nft *Nft) TableName() string {
+	return "nft"
+}
+
+func (nft *Nft) SelfInsert(db *gorm.DB) error {
+	if err := db.Create(&nft).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (nft *Nft) SelfUpdate(db *gorm.DB) error {
+	if err := db.Updates(&nft).Error; err != nil {
+		return err
+	}
+	return nil
+}

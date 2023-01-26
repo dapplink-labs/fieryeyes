@@ -42,9 +42,11 @@ func (d *Database) MigrateDb() error {
 		&models.Addresses{},
 		&models.Collection{},
 		&models.DailyAddress{},
+		&models.MainToken{},
 		&models.Nft{},
-		models.NftAddress{},
-		models.NftDaily{},
+		&models.NftAddress{},
+		&models.NftDaily{},
+		&models.TokenPrice{},
 	); err != nil {
 		log.WithError(err).Fatal("Failed to migrate database")
 		return err

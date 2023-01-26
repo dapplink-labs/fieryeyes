@@ -11,5 +11,24 @@ type NftDaily struct {
 	TotalHolder           uint64 `json:"total_holder" gorm:"column:total_holder;default: 0;"`
 	TotalGiantWhaleHolder uint64 `json:"total_giant_whale_holder" gorm:"column:total_giant_whale_holder;default: 0;"`
 	LatestPrice           string `gorm:"type:varchar(256)"  json:"latest_price"`
+	DateTime              string `json:"date_time"`
 	*gorm.Model
+}
+
+func (nd *NftDaily) TableName() string {
+	return "nft_daily"
+}
+
+func (nd *NftDaily) SelfInsert(db *gorm.DB) error {
+	if err := db.Create(&nd).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (nd *NftDaily) SelfUpdate(db *gorm.DB) error {
+	if err := db.Updates(&nd).Error; err != nil {
+		return err
+	}
+	return nil
 }
