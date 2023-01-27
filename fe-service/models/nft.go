@@ -6,6 +6,7 @@ import (
 
 type Nft struct {
 	Id                    uint64 `json:"id" gorm:"primary_key;AUTO_INCREMENT"`
+	Introduce             string `gorm:"type:text" json:"introduce"`
 	Address               string `gorm:"type:char(128)"`
 	TokenId               string `gorm:"type:varchar(128)" json:"token_id"`
 	TokenUrl              string `gorm:"type:varchar(128)" json:"token_url"`
@@ -37,7 +38,7 @@ func (nft *Nft) SelfUpdate(db *gorm.DB) error {
 
 func (nft *Nft) GetNftById(db *gorm.DB) (*Nft, error) {
 	var newNft *Nft
-	if err := db.Where("id = ?", nft.Id).First(&newNft).Error; err != nil {
+	if err := db.Where("token_id = ?", nft.TokenId).First(&newNft).Error; err != nil {
 		return nil, err
 	}
 	return newNft, nil

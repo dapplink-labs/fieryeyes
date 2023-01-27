@@ -8,7 +8,7 @@ type Collection struct {
 	Id                      uint64 `json:"id" gorm:"primary_key;AUTO_INCREMENT"`
 	Name                    string `gorm:"type:char(128)" json:"name"`
 	Address                 string `gorm:"type:char(128)" json:"address"`
-	Introduce               string `gorm:"type:char(512)" json:"introduce"`
+	Introduce               string `gorm:"type:text" json:"introduce"`
 	TotalHolder             uint64 `json:"total_holder" gorm:"column:total_holder;default: 0;"`
 	AverageHolder           uint64 `json:"average_holder" gorm:"column:total_holder;default: 0;"`
 	TotalGiantWhaleHolder   uint64 `json:"total_giant_whale_holder" gorm:"column:total_giant_whale_holder;default: 0;"`
