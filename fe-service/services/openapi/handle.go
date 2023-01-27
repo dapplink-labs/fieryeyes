@@ -114,6 +114,73 @@ func (as *ApiService) GetNftCollectionsInfo(c echo.Context) error {
 }
 
 func (as *ApiService) GetNftInfo(c echo.Context) error {
-	retValue := common.BaseResource(true, SelfServiceOK, "nft info", "get nft info success")
+	var nftReq types.NftReq
+	if err := c.Bind(&nftReq); err != nil {
+		retValue := common.BaseResource(false, SelfInvalidParams, nil, "params format error")
+		return c.JSON(http.StatusOK, retValue)
+	}
+	nft := &models.Nft{
+		TokenId: nftReq.TokenId,
+	}
+	dbNft, err := nft.GetNftById(as.Cfg.Database.Db)
+	if err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "no this nft in system")
+		return c.JSON(http.StatusOK, retValue)
+	}
+	nftInfo := &models.NftDaily{NftId: nft.Id}
+	nftList, _ := nftInfo.GetDailyAddressListById(nftReq.Page, nftReq.PageSize, as.Cfg.Database.Db)
+	var nftArr []types.NftDailyStat
+	for _, key := range nftList {
+		nds := types.NftDailyStat{
+			NftId:                 key.NftId,
+			TotalTxn:              key.TotalTxn,
+			TotalHolder:           key.TotalHolder,
+			TotalGiantWhaleHolder: key.TotalGiantWhaleHolder,
+			LatestPrice:           key.LatestPrice,
+			DateTime:              key.DateTime,
+		}
+		nftArr = append(nftArr, nds)
+	}
+	nftAddress := &models.NftAddress{NftId: nft.Id}
+	nftAddrList, _ := nftAddress.GetNftAddressListById(nftReq.Page, nftReq.PageSize, as.Cfg.Database.Db)
+	var holder *types.CurrentHolder
+	var holderHistory []types.HistoricalHolderList
+	for _, key := range nftAddrList {
+		addr := models.Addresses{
+			Id: key.AddressId,
+		}
+		dbAddress, _ := addr.GetAddressById(as.Cfg.Database.Db)
+		if key.IsCurrent == 1 {
+			holder = &types.CurrentHolder{
+				AddressId: dbAddress.Id,
+				Address:   dbAddress.Address,
+				Label:     dbAddress.Label,
+			}
+		} else {
+			holderHistory = append(
+				holderHistory,
+				types.HistoricalHolderList{
+					AddressId: dbAddress.Id,
+					Address:   dbAddress.Address,
+					Label:     dbAddress.Label,
+				},
+			)
+		}
+	}
+	nftInfos := &types.NftInfo{
+		Id:                    dbNft.Id,
+		Address:               dbNft.Address,
+		TokenId:               dbNft.TokenId,
+		TokenUrl:              dbNft.TokenUrl,
+		TotalTxn:              dbNft.TotalTxn,
+		TotalHolder:           dbNft.TotalHolder,
+		TotalGiantWhaleHolder: dbNft.TotalGiantWhaleHolder,
+		LatestPrice:           dbNft.LatestPrice,
+		SuggestLevel:          dbNft.SuggestLevel,
+		NftDaily:              nftArr,
+		Holder:                holder,
+		HistoricalHolder:      holderHistory,
+	}
+	retValue := common.BaseResource(true, SelfServiceOK, nftInfos, "get nft info success")
 	return c.JSON(http.StatusOK, retValue)
 }
