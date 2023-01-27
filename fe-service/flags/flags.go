@@ -65,7 +65,6 @@ var (
 		Value:  8080,
 		EnvVar: prefixEnvVar("INDEXER_RPC_PORT"),
 	}
-
 	RPCHostNameFlag = cli.StringFlag{
 		Name:   "RPC-hostname",
 		Usage:  "The hostname of the RPC server",

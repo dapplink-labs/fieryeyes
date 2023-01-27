@@ -6,7 +6,7 @@ import (
 
 type MainToken struct {
 	Id   uint64 `json:"id" gorm:"primary_key;AUTO_INCREMENT"`
-	name string `gorm:"type:varchar(64)" json:"name"`
+	Name string `gorm:"type:varchar(64)" json:"name"`
 	*gorm.Model
 }
 
@@ -26,4 +26,12 @@ func (mt *MainToken) SelfUpdate(db *gorm.DB) error {
 		return err
 	}
 	return nil
+}
+
+func (mt *MainToken) GetMainTokenList(db *gorm.DB) ([]MainToken, error) {
+	var mainTokenList []MainToken
+	if err := db.Find(&mainTokenList).Error; err != nil {
+		return nil, err
+	}
+	return mainTokenList, nil
 }

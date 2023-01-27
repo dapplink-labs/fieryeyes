@@ -9,7 +9,7 @@ type TokenPrice struct {
 	MainTokenId uint64 `json:"main_token_id"`
 	UsdPrice    string `gorm:"type:varchar(64)" json:"usd_price"`
 	CnyPrice    string `gorm:"type:varchar(64)" json:"cny_price"`
-	StatType    uint8  `json:"stat_type" gorm:"column:stat_type;default: 0;"` // 0: normal; 1: daily
+	DateTime    string `json:"date_time"`
 	*gorm.Model
 }
 
@@ -29,4 +29,12 @@ func (tp *TokenPrice) SelfUpdate(db *gorm.DB) error {
 		return err
 	}
 	return nil
+}
+
+func (tp *TokenPrice) GetTokenPriceByTokenId(db *gorm.DB) (*TokenPrice, error) {
+	var mtp *TokenPrice
+	if err := db.Where("main_token_id = ?", tp.MainTokenId).First(&mtp).Error; err != nil {
+		return nil, err
+	}
+	return mtp, nil
 }

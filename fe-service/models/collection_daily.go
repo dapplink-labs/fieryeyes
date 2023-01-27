@@ -11,7 +11,6 @@ type CollectionDaily struct {
 	AverageHolder           uint64 `json:"average_holder" gorm:"column:total_holder;default: 0;"`
 	TotalGiantWhaleHolder   uint64 `json:"total_giant_whale_holder" gorm:"column:total_giant_whale_holder;default: 0;"`
 	AverageGiantWhaleHolder uint64 `json:"average_giant_whale_holder" gorm:"column:average_giant_whale_holder;default: 0;"`
-	StatType                uint8  `json:"stat_type" gorm:"column:stat_type;default: 0;"` // 0: normal; 1: daily
 	TotalTxn                uint64 `json:"total_txn" gorm:"column:total_txn;default: 0;"`
 	AverageTxn              uint64 `json:"average_txn" gorm:"column:average_txn;default: 0;"`
 	AveragePrice            string `gorm:"type:varchar(256)"  json:"average_price"`
@@ -41,7 +40,7 @@ func (cd *CollectionDaily) SelfUpdate(db *gorm.DB) error {
 
 func (cd *CollectionDaily) GetDailyCollectionListById(page, pageSize int, db *gorm.DB) ([]CollectionDaily, error) {
 	var dailyList []CollectionDaily
-	if err := db.Where("CollectionId = ?", cd.CollectionId).Offset((page - 1) * pageSize).Limit(pageSize).Find(&dailyList).Error; err != nil {
+	if err := db.Where("collection_id = ?", cd.CollectionId).Offset((page - 1) * pageSize).Limit(pageSize).Find(&dailyList).Error; err != nil {
 		return nil, err
 	}
 	return dailyList, nil

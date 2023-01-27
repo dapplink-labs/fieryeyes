@@ -41,6 +41,7 @@ func (d *Database) MigrateDb() error {
 	if err := d.Db.AutoMigrate(
 		&models.Addresses{},
 		&models.Collection{},
+		&models.CollectionDaily{},
 		&models.DailyAddress{},
 		&models.MainToken{},
 		&models.Nft{},

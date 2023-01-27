@@ -1,6 +1,7 @@
 package openapi
 
 import (
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/labstack/echo/v4"
 	"github.com/savour-labs/fieryeyes/fe-service/models"
 	"github.com/savour-labs/fieryeyes/fe-service/services/common"
@@ -13,6 +14,31 @@ const (
 	SelfServiceError  = 4000
 	SelfInvalidParams = 4001
 )
+
+func (as *ApiService) GetMainTokenPrice(c echo.Context) error {
+	mainToken := models.MainToken{}
+	mainTokenList, err := mainToken.GetMainTokenList(as.Cfg.Database.Db)
+	if err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "main token is not config")
+		return c.JSON(http.StatusOK, retValue)
+	}
+	var mainTokenPriceList []types.TokenPrice
+	for _, dbMt := range mainTokenList {
+		tp := models.TokenPrice{MainTokenId: dbMt.Id}
+		mtp, _ := tp.GetTokenPriceByTokenId(as.Cfg.Database.Db)
+		mainTokenPriceList = append(
+			mainTokenPriceList,
+			types.TokenPrice{
+				MainTokenName: dbMt.Name,
+				UsdPrice:      mtp.UsdPrice,
+				CnyPrice:      mtp.CnyPrice,
+				DateTime:      mtp.DateTime,
+			},
+		)
+	}
+	retValue := common.BaseResource(true, SelfServiceOK, mainTokenPriceList, "get main token price success")
+	return c.JSON(http.StatusOK, retValue)
+}
 
 func (as *ApiService) GetAddressInfo(c echo.Context) error {
 	var addrReq types.AddressReq
@@ -127,8 +153,8 @@ func (as *ApiService) GetNftInfo(c echo.Context) error {
 		retValue := common.BaseResource(true, SelfServiceError, nil, "no this nft in system")
 		return c.JSON(http.StatusOK, retValue)
 	}
-	nftInfo := &models.NftDaily{NftId: nft.Id}
-	nftList, _ := nftInfo.GetDailyAddressListById(nftReq.Page, nftReq.PageSize, as.Cfg.Database.Db)
+	nftInfo := &models.NftDaily{NftId: dbNft.Id}
+	nftList, _ := nftInfo.GetDailyANftListById(nftReq.Page, nftReq.PageSize, as.Cfg.Database.Db)
 	var nftArr []types.NftDailyStat
 	for _, key := range nftList {
 		nds := types.NftDailyStat{
@@ -141,24 +167,28 @@ func (as *ApiService) GetNftInfo(c echo.Context) error {
 		}
 		nftArr = append(nftArr, nds)
 	}
-	nftAddress := &models.NftAddress{NftId: nft.Id}
+	nftAddress := &models.NftAddress{NftId: dbNft.Id}
 	nftAddrList, _ := nftAddress.GetNftAddressListById(nftReq.Page, nftReq.PageSize, as.Cfg.Database.Db)
-	var holder *types.CurrentHolder
-	var holderHistory []types.HistoricalHolderList
+	var holderList []types.CurrentHolder
+	var holderHistoryList []types.HistoricalHolderList
 	for _, key := range nftAddrList {
 		addr := models.Addresses{
 			Id: key.AddressId,
 		}
 		dbAddress, _ := addr.GetAddressById(as.Cfg.Database.Db)
-		if key.IsCurrent == 1 {
-			holder = &types.CurrentHolder{
-				AddressId: dbAddress.Id,
-				Address:   dbAddress.Address,
-				Label:     dbAddress.Label,
-			}
+		log.Info("key.IsCurrent", "key.IsCurrent", key.IsCurrent)
+		if key.IsCurrent != 0 {
+			holderList = append(
+				holderList,
+				types.CurrentHolder{
+					AddressId: dbAddress.Id,
+					Address:   dbAddress.Address,
+					Label:     dbAddress.Label,
+				},
+			)
 		} else {
-			holderHistory = append(
-				holderHistory,
+			holderHistoryList = append(
+				holderHistoryList,
 				types.HistoricalHolderList{
 					AddressId: dbAddress.Id,
 					Address:   dbAddress.Address,
@@ -178,8 +208,8 @@ func (as *ApiService) GetNftInfo(c echo.Context) error {
 		LatestPrice:           dbNft.LatestPrice,
 		SuggestLevel:          dbNft.SuggestLevel,
 		NftDaily:              nftArr,
-		Holder:                holder,
-		HistoricalHolder:      holderHistory,
+		CurrentHolder:         holderList,
+		HistoricalHolder:      holderHistoryList,
 	}
 	retValue := common.BaseResource(true, SelfServiceOK, nftInfos, "get nft info success")
 	return c.JSON(http.StatusOK, retValue)

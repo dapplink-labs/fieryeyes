@@ -38,6 +38,6 @@ type NftInfo struct {
 	LatestPrice           string                 `json:"latest_price"`
 	SuggestLevel          uint8                  `json:"suggest_level"`
 	NftDaily              []NftDailyStat         `json:"nft_daily"`
-	Holder                *CurrentHolder         `json:"holder"`
+	CurrentHolder         []CurrentHolder        `json:"current_holder"`
 	HistoricalHolder      []HistoricalHolderList `json:"historical_holder"`
 }
