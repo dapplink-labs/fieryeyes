@@ -9,9 +9,8 @@ import (
 )
 
 type FeServiceIndexerConfig struct {
-	IndexerRpcHost string
-	IndexerRpcPort int64
-	LoopInterval   time.Duration
+	IndexerRpcSocket string
+	LoopInterval     time.Duration
 }
 
 type FeServiceIndexer struct {

@@ -16,8 +16,9 @@ type Config struct {
 	ApiServicePort      uint64
 	RpcHost             string
 	RpcPort             uint64
-	IndexerRpcHost      string
-	IndexerRpcPort      uint64
+	IndexerSocket       string
+	LawSocket           string
+	ScrapySocket        string
 	EchoDebug           bool
 	MetricsServerEnable bool
 	MetricsHostname     string
@@ -35,8 +36,9 @@ func NewConfig(ctx *cli.Context) (Config, error) {
 		DbPort:              ctx.GlobalUint64(flags.DBPortFlag.Name),
 		DbName:              ctx.GlobalString(flags.DBNameFlag.Name),
 		ApiServicePort:      ctx.GlobalUint64(flags.ApiServicePortFlag.Name),
-		IndexerRpcHost:      ctx.GlobalString(flags.IndexerRPCHostNameFlag.Name),
-		IndexerRpcPort:      ctx.GlobalUint64(flags.IndexerRPCPortFlag.Name),
+		IndexerSocket:       ctx.GlobalString(flags.IndexerSocketFlag.Name),
+		LawSocket:           ctx.GlobalString(flags.LawSocketFlag.Name),
+		ScrapySocket:        ctx.GlobalString(flags.ScrapySockerFlag.Name),
 		RpcHost:             ctx.GlobalString(flags.RPCHostNameFlag.Name),
 		RpcPort:             ctx.GlobalUint64(flags.RPCPortFlag.Name),
 		MetricsServerEnable: ctx.GlobalBool(flags.MetricsServerEnableFlag.Name),
