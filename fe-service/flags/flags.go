@@ -53,17 +53,23 @@ var (
 		Value:  8080,
 		EnvVar: prefixEnvVar("API_SERVICE_PORT"),
 	}
-	IndexerRPCHostNameFlag = cli.StringFlag{
-		Name:   "indexer-rpc-hostname",
-		Usage:  "The hostname of indexer RPC server",
-		Value:  "127.0.0.1",
-		EnvVar: prefixEnvVar("INDEXER_RPC_HOST_NAME"),
+	IndexerSocketFlag = cli.StringFlag{
+		Name:   "indexer-socket",
+		Usage:  "The socket of indexer RPC server",
+		Value:  "127.0.0.1:8080",
+		EnvVar: prefixEnvVar("INDEXER_SOCKET"),
 	}
-	IndexerRPCPortFlag = cli.Uint64Flag{
-		Name:   "indexer-rpc-port",
-		Usage:  "The port of the indexer RPC server",
-		Value:  8080,
-		EnvVar: prefixEnvVar("INDEXER_RPC_PORT"),
+	LawSocketFlag = cli.StringFlag{
+		Name:   "law-socket",
+		Usage:  "The socket of law RPC server",
+		Value:  "127.0.0.1:8081",
+		EnvVar: prefixEnvVar("LAW_SOCKET"),
+	}
+	ScrapySockerFlag = cli.StringFlag{
+		Name:   "scrapy-socket",
+		Usage:  "The socket of scrapy RPC server",
+		Value:  "127.0.0.1:8082",
+		EnvVar: prefixEnvVar("SCRAPY_SOCKET"),
 	}
 	RPCHostNameFlag = cli.StringFlag{
 		Name:   "RPC-hostname",
@@ -123,8 +129,9 @@ var requiredFlags = []cli.Flag{
 	DBPasswordFlag,
 	DBNameFlag,
 	ApiServicePortFlag,
-	IndexerRPCHostNameFlag,
-	IndexerRPCPortFlag,
+	IndexerSocketFlag,
+	LawSocketFlag,
+	ScrapySockerFlag,
 	RPCHostNameFlag,
 	RPCPortFlag,
 }

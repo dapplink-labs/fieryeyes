@@ -119,9 +119,8 @@ func NewFeService(cfg Config) (*FeService, error) {
 	}
 
 	feServiceConfig := &indexer.FeServiceIndexerConfig{
-		IndexerRpcHost: cfg.IndexerRpcHost,
-		IndexerRpcPort: int64(cfg.IndexerRpcPort),
-		LoopInterval:   cfg.LoopInterval,
+		IndexerRpcSocket: cfg.IndexerSocket,
+		LoopInterval:     cfg.LoopInterval,
 	}
 
 	feService, err := indexer.NewFeServiceIndexer(ctx, feServiceConfig)
