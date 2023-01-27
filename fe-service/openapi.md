@@ -34,6 +34,17 @@ response
 }
 ```
 
+curl 
+```
+curl --location --request GET '127.0.0.1:8888/openapi/v1/GetMainTokenPrice' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "token_id": "111",
+    "page": 1,
+    "page_size": 100
+}'
+```
+
 ### 2. GetAddressInfo
 
 request example
@@ -81,6 +92,16 @@ response
 }
 ```
 
+curl
+```
+curl --location --request POST '127.0.0.1:8888/openapi/v1/getAddressInfo' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "address_id": 1,
+    "daily_page": 1,
+    "daily_page_size": 100
+}'
+```
 
 ### 3. getNftCollectionsInfo
 
@@ -129,6 +150,17 @@ response
     ]
   }
 }
+```
+
+curl
+```
+curl --location --request POST '127.0.0.1:8888/openapi/v1/getNftCollectionsInfo' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "token_address": "0xD9E24CF4328df7CC34966C058CBAFeAe744beC1c",
+    "daily_page": 1,
+    "daily_page_size": 100
+}'
 ```
 
 ### 4. GetNftInfo
@@ -185,5 +217,17 @@ response
         ]
     }
 }
+```
+
+curl 
+
+```
+curl --location --request POST '127.0.0.1:8888/openapi/v1/getNftInfo' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "token_id": "111",
+    "page": 1,
+    "page_size": 100
+}'
 ```
 
