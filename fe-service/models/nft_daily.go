@@ -32,3 +32,11 @@ func (nd *NftDaily) SelfUpdate(db *gorm.DB) error {
 	}
 	return nil
 }
+
+func (nd *NftDaily) GetDailyAddressListById(page, pageSize int, db *gorm.DB) ([]NftDaily, error) {
+	var nftList []NftDaily
+	if err := db.Where("nft_id = ?", nd.NftId).Offset((page - 1) * pageSize).Limit(pageSize).Find(&nftList).Error; err != nil {
+		return nil, err
+	}
+	return nftList, nil
+}

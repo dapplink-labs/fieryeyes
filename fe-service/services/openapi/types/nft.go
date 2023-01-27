@@ -12,16 +12,19 @@ type NftDailyStat struct {
 	TotalHolder           uint64 `json:"total_holder"`
 	TotalGiantWhaleHolder uint64 `json:"total_giant_whale_holder"`
 	LatestPrice           string `json:"latest_price"`
+	DateTime              string `json:"date_time"`
 }
 
 type CurrentHolder struct {
-	Address string `json:"address"`
-	Label   string `json:"label"`
+	AddressId uint64 `json:"address_id"`
+	Address   string `json:"address"`
+	Label     string `json:"label"`
 }
 
 type HistoricalHolderList struct {
-	Address string `json:"address"`
-	Label   string `json:"label"`
+	AddressId uint64 `json:"address_id"`
+	Address   string `json:"address"`
+	Label     string `json:"label"`
 }
 
 type NftInfo struct {
