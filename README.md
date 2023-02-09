@@ -89,4 +89,5 @@ source .evn
 
 Read through [CONTRIBUTING.md](https://github.com/savour-labs/fieryeyes/blob/main/CONTRIBUTING.md) for a general overview of our contribution process. Then check out our list of good first issues to find something fun to work on!
 
-
+## Disclaimer
+This code has not yet been audited, and should not be used in any production systems.
