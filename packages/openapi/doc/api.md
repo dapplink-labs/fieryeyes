@@ -7,6 +7,11 @@ apikey: FgfW27uQdqXThfmVe-6y4Cq238e4X9-
 
 #### collections
 post /collections
+{
+    limit,
+    take,
+    mint: true/false (mint页面选择true)
+}
 ```
 [{
     id: 1
@@ -208,4 +213,19 @@ post /nfts
 post /twitter/explore
 ```
 ['tama', 'pink','dps']
+```
+
+#### shadow chart
+post /rodaer
+
+```
+{
+    fluidity: 40,
+    blueChipDegree: 40,
+    potentialIncome: 40,
+    heat: 40,
+    activeCommunity: 40,
+    Reliability: 40,
+}
+
 ```
