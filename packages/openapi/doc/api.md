@@ -229,3 +229,31 @@ post /rodaer
 }
 
 ```
+
+#### charts
+post /charts
+{
+    limit: 7 (代表这里是7天的数据)
+}
+```
+[{
+    id: 1,
+    nftValues: [{
+        value: 40000,
+        perChange: 0.24
+    }],
+    collections: [{
+        value: 40000,
+        perChange: 0.24
+    }],
+    whaleHolders: [{
+        value: 40000,
+        perChange: 0.24
+    }],
+    nfts: [{
+        value: 40000,
+        perChange: 0.24
+    }],
+}]
+
+```
