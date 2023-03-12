@@ -54,6 +54,7 @@ func (as *ApiService) GetIndex(c echo.Context) error {
 			ChainId:   value.Id,
 			ChainName: value.Name,
 			ChainIcon: value.Icon,
+			ApiUrl:    value.ApiUrl,
 		}
 		supportChainList = append(supportChainList, sChain)
 	}
@@ -73,9 +74,9 @@ func (as *ApiService) GetIndex(c echo.Context) error {
 		retValue := common.BaseResource(true, SelfServiceError, nil, "get hot collection fail")
 		return c.JSON(http.StatusOK, retValue)
 	}
-	var hotCollectionList []types.HotCollection
+	var hotCollectionList []types.Collection
 	for _, value := range hotCollections {
-		hotC := types.HotCollection{
+		hotC := types.Collection{
 			Id:           value.Id,
 			Rank:         1,
 			Image:        "",
@@ -147,11 +148,41 @@ func (as *ApiService) GetIndex(c echo.Context) error {
 		WhaleHolderList:   WhaleHolderList,
 		ShadowScores:      shadowScore,
 	}
-	return c.JSON(http.StatusOK, index)
+	retValue := common.BaseResource(true, SelfServiceOK, index, "success")
+	return c.JSON(http.StatusOK, retValue)
 }
 
 func (as *ApiService) GetHotCollectionList(c echo.Context) error {
-	return c.JSON(http.StatusOK, "retValue")
+	var collectionReq types.CollectionReq
+	if err := c.Bind(&collectionReq); err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "invalid request params")
+		return c.JSON(http.StatusOK, retValue)
+	}
+	collection := models.Collection{}
+	collectionArray, err := collection.GetCollectionList(collectionReq.Page, collectionReq.PageSize, collectionReq.OrderBy, as.Cfg.Database.Db)
+	if err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "get collection list fail")
+		return c.JSON(http.StatusOK, retValue)
+	}
+	var collectionList []types.Collection
+	for _, value := range collectionArray {
+		hotC := types.Collection{
+			Id:           value.Id,
+			Rank:         1,
+			Image:        "",
+			Name:         value.Name,
+			Holder:       value.TotalHolder,
+			WhaleHolder:  value.TotalGiantWhaleHolder,
+			SuggestLevel: int8(value.SuggestLevel),
+			Volume:       value.TotalTxn,
+			FloorPrice:   value.FloorPrice,
+			BestOffer:    value.BestOffer,
+			ShadowScore:  "10",
+		}
+		collectionList = append(collectionList, hotC)
+	}
+	retValue := common.BaseResource(true, SelfServiceOK, collectionList, "success")
+	return c.JSON(http.StatusOK, retValue)
 }
 
 func (as *ApiService) GetHotCollectionDetail(c echo.Context) error {

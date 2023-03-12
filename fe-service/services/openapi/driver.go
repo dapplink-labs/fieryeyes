@@ -47,7 +47,7 @@ func NewApiService(ctx context.Context, cfg *ApiConfig) (*ApiService, error) {
 func (as *ApiService) routes() {
 	as.Echo.GET("api/v1/GetMainToken", as.GetMainToken)
 	as.Echo.GET("api/v1/GetIndex", as.GetIndex)
-	as.Echo.GET("api/v1/GetHotCollectionList", as.GetHotCollectionList)
+	as.Echo.POST("api/v1/GetHotCollectionList", as.GetHotCollectionList)
 	as.Echo.GET("api/v1/GetHotCollectionDetail", as.GetHotCollectionDetail)
 	as.Echo.GET("api/v1/GetLiveMintList", as.GetLiveMintList)
 }

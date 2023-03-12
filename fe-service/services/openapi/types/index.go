@@ -4,6 +4,7 @@ type SupportChain struct {
 	ChainId   uint64 `json:"chain_id"`
 	ChainName string `json:"chain_name"`
 	ChainIcon string `json:"chain_icon"`
+	ApiUrl    string `json:"api_url"`
 }
 
 type HeadDataStat struct {
@@ -18,10 +19,10 @@ type HeadDataStat struct {
 }
 
 type Index struct {
-	SupportChains     []SupportChain  `json:"support_chain"`
-	HeadStat          *HeadDataStat   `json:"head_data"`
-	HotCollectionList []HotCollection `json:"hot_collection_list"`
-	LiveMintList      []LiveMint      `json:"live_mint_list"`
-	WhaleHolderList   []WhaleHolder   `json:"whale_holder_list"`
-	ShadowScores      *ShadowScore    `json:"shadow_score"`
+	SupportChains     []SupportChain `json:"support_chain"`
+	HeadStat          *HeadDataStat  `json:"head_data"`
+	HotCollectionList []Collection   `json:"hot_collection_list"`
+	LiveMintList      []LiveMint     `json:"live_mint_list"`
+	WhaleHolderList   []WhaleHolder  `json:"whale_holder_list"`
+	ShadowScores      *ShadowScore   `json:"shadow_score"`
 }

@@ -62,6 +62,14 @@ func (ct *Collection) GetLiveMintList(db *gorm.DB) ([]Collection, error) {
 	return collectionList, nil
 }
 
+func (ct *Collection) GetCollectionList(page, pageSize int, orderBy int8, db *gorm.DB) ([]Collection, error) {
+	var collectionList []Collection
+	if err := db.Order(ct.SuggestLevel).Offset((page - 1) * pageSize).Limit(pageSize).Find(&collectionList).Error; err != nil {
+		return nil, err
+	}
+	return collectionList, nil
+}
+
 func (ct *Collection) GetCollectionById(db *gorm.DB) (*Collection, error) {
 	var collection *Collection
 	if err := db.Where("address = ?", ct.Address).First(&collection).Error; err != nil {
