@@ -2,6 +2,7 @@ import express from 'express';
 import { getCollections, getCollection } from "./services/collection.service";
 import { getNft, getNfts } from "./services/nft.service";
 import { getHolder, getHolders } from "./services/holder.service";
+import { getChart } from "./services/chart.service";
 const realapikey = 'FgfW27uQdqXThfmVe-6y4Cq238e4X9-';
 const router = express.Router();
 
@@ -105,5 +106,19 @@ router.get('/whaleHolders/:id', async (req: any, res) => {
       success: !!result,
     });
   });
+
+  router.post('/charts', async (req: any, res) => {
+    const { apikey } = req.headers;
+    if (apikey !== realapikey) {
+      return res.status(401).send('not authed');
+    }
+  
+    const { limit } = req.body;
+    const result = await getChart(limit);
+    return res.status(200).send({
+      data: result,
+      success: !!result,
+    });
+  });  
 
 export default router;
