@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+      "lib": [
+        "dom",
+        "es5",
+        "es6",
+        "es2019"
+      ],
+      "target": "es5",
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "outDir": "./dist",
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "esModuleInterop": true,
+      "sourceMap": true,
+      "allowJs": true,
+      "resolveJsonModule": true,
+      "typeRoots": [
+        "node_modules/@types",
+        "./typings.d.ts"
+      ],
+      "allowSyntheticDefaultImports": true
+    }
+  }
