@@ -42,7 +42,7 @@ func (as *ApiService) GetMainToken(c echo.Context) error {
 func (as *ApiService) GetIndex(c echo.Context) error {
 	chain := models.Chain{}
 	collection := models.Collection{}
-	holder := models.Addresses{}
+	holder := models.Holders{}
 	chainList, err := chain.GetChainList(as.Cfg.Database.Db)
 	if err != nil {
 		retValue := common.BaseResource(true, SelfServiceError, nil, "get support chain list fail")

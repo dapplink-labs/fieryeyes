@@ -39,12 +39,12 @@ func NewDatabase(ctx context.Context, cfg *DatabaseConfig) (*Database, error) {
 
 func (d *Database) MigrateDb() error {
 	if err := d.Db.AutoMigrate(
-		&models.Addresses{},
+		&models.Holders{},
 		&models.Chain{},
 		&models.Collection{},
 		&models.CollectionStat{},
-		&models.CollectWhale{},
-		&models.DailyAddress{},
+		&models.CollectionWhale{},
+		&models.HolderStat{},
 		&models.MainToken{},
 		&models.Nft{},
 		&models.NftHolder{},
