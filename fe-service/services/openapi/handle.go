@@ -1,7 +1,6 @@
 package openapi
 
 import (
-	"github.com/ethereum/go-ethereum/log"
 	"github.com/labstack/echo/v4"
 	"github.com/savour-labs/fieryeyes/fe-service/models"
 	"github.com/savour-labs/fieryeyes/fe-service/services/common"
@@ -15,7 +14,7 @@ const (
 	SelfInvalidParams = 4001
 )
 
-func (as *ApiService) GetMainTokenPrice(c echo.Context) error {
+func (as *ApiService) GetMainToken(c echo.Context) error {
 	mainToken := models.MainToken{}
 	mainTokenList, err := mainToken.GetMainTokenList(as.Cfg.Database.Db)
 	if err != nil {
@@ -40,177 +39,125 @@ func (as *ApiService) GetMainTokenPrice(c echo.Context) error {
 	return c.JSON(http.StatusOK, retValue)
 }
 
-func (as *ApiService) GetAddressInfo(c echo.Context) error {
-	var addrReq types.AddressReq
-	if err := c.Bind(&addrReq); err != nil {
-		retValue := common.BaseResource(true, SelfServiceError, nil, "invalid request params")
-		return c.JSON(http.StatusOK, retValue)
-	}
-	address := &models.Addresses{
-		Id: addrReq.AddressId,
-	}
-	dbAddress, err := address.GetAddressById(as.Cfg.Database.Db)
+func (as *ApiService) GetIndex(c echo.Context) error {
+	chain := models.Chain{}
+	collection := models.Collection{}
+	holder := models.Addresses{}
+	chainList, err := chain.GetChainList(as.Cfg.Database.Db)
 	if err != nil {
-		retValue := common.BaseResource(true, SelfServiceError, nil, "no this address in system")
+		retValue := common.BaseResource(true, SelfServiceError, nil, "get support chain list fail")
 		return c.JSON(http.StatusOK, retValue)
 	}
-	addrDaily := &models.DailyAddress{
-		AddressId: addrReq.AddressId,
+	var supportChainList []types.SupportChain
+	for _, value := range chainList {
+		sChain := types.SupportChain{
+			ChainId:   value.Id,
+			ChainName: value.Name,
+			ChainIcon: value.Icon,
+		}
+		supportChainList = append(supportChainList, sChain)
 	}
-	addressDailyList, _ := addrDaily.GetDailyAddressListById(addrReq.DailyPage, addrReq.DailyPageSize, as.Cfg.Database.Db)
-	var addressDailyArray []types.AddressDaily
-	for _, key := range addressDailyList {
-		addressDailyArray = append(
-			addressDailyArray,
-			types.AddressDaily{
-				AddressId:  key.AddressId,
-				Balance:    key.Balance,
-				TokenValue: key.TokenValue,
-				NftValue:   key.NftValue,
-				DateTime:   key.DateTime,
-			},
-		)
+	// todo head stat
+	headStat := &types.HeadDataStat{
+		TotalNftValue:         "10000",
+		TotalNftValueRatio:    0.95,
+		TotalCollections:      "10000",
+		TotalCollectionsRatio: 0.95,
+		TotalWhale:            "10000",
+		TotalWhaleRatio:       0.95,
+		TotalNft:              "10000",
+		TotalNftRatio:         0.95,
 	}
-	resultRet := &types.AddressInfoRep{
-		Id:               dbAddress.Id,
-		Address:          dbAddress.Address,
-		Label:            dbAddress.Label,
-		IsGiantWhale:     dbAddress.IsGiantWhale,
-		Balance:          dbAddress.Balance,
-		TokenValue:       dbAddress.TokenValue,
-		NftValue:         dbAddress.NftValue,
-		AddressDailyList: addressDailyArray,
+	hotCollections, err := collection.GetHotCollectionList(as.Cfg.Database.Db)
+	if err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "get hot collection fail")
+		return c.JSON(http.StatusOK, retValue)
 	}
-	retValue := common.BaseResource(true, SelfServiceOK, resultRet, "get address info success")
-	return c.JSON(http.StatusOK, retValue)
+	var hotCollectionList []types.HotCollection
+	for _, value := range hotCollections {
+		hotC := types.HotCollection{
+			Id:           value.Id,
+			Rank:         1,
+			Image:        "",
+			Name:         value.Name,
+			Holder:       value.TotalHolder,
+			WhaleHolder:  value.TotalGiantWhaleHolder,
+			SuggestLevel: int8(value.SuggestLevel),
+			Volume:       value.TotalTxn,
+			FloorPrice:   value.FloorPrice,
+			BestOffer:    value.BestOffer,
+			ShadowScore:  "10",
+		}
+		hotCollectionList = append(hotCollectionList, hotC)
+	}
+	liveMints, err := collection.GetLiveMintList(as.Cfg.Database.Db)
+	if err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "get live mint fail")
+		return c.JSON(http.StatusOK, retValue)
+	}
+	var LiveMintList []types.LiveMint
+	for _, value := range liveMints {
+		lMint := types.LiveMint{
+			Id:               value.Id,
+			Rank:             1,
+			Image:            "",
+			Name:             value.Name,
+			Holder:           value.TotalHolder,
+			WhaleHolder:      value.TotalGiantWhaleHolder,
+			SuggestLevel:     int8(value.SuggestLevel),
+			Mint:             value.TotalMint,
+			MintPercent:      0.95,
+			TotalMint:        value.TotalMint,
+			TotalMintPercent: 0.95,
+			LastMintTime:     value.LastMintTime,
+		}
+		LiveMintList = append(LiveMintList, lMint)
+	}
+	whaleHolders, err := holder.GetWhaleHolderList(as.Cfg.Database.Db)
+	if err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "get live mint fail")
+		return c.JSON(http.StatusOK, retValue)
+	}
+	var WhaleHolderList []types.WhaleHolder
+	for _, value := range whaleHolders {
+		wHolder := types.WhaleHolder{
+			Address:            value.Address,
+			TotalValue:         value.TokenValue + value.NftValue,
+			HoldNftList:        nil,
+			HoldCollectionList: nil,
+			RealizePnl:         "10",
+			Label:              value.Label,
+		}
+		WhaleHolderList = append(WhaleHolderList, wHolder)
+	}
+	// todo: shadow score
+	shadowScore := &types.ShadowScore{
+		BlueChip:        "95",
+		Fluidity:        "80",
+		Reliability:     "60",
+		CommunityActive: "70",
+		Heat:            "50",
+		PotentialIncome: "80",
+	}
+	index := &types.Index{
+		SupportChains:     supportChainList,
+		HeadStat:          headStat,
+		HotCollectionList: hotCollectionList,
+		LiveMintList:      LiveMintList,
+		WhaleHolderList:   WhaleHolderList,
+		ShadowScores:      shadowScore,
+	}
+	return c.JSON(http.StatusOK, index)
 }
 
-func (as *ApiService) GetNftCollectionsInfo(c echo.Context) error {
-	var collectionReq types.CollectionReq
-	if err := c.Bind(&collectionReq); err != nil {
-		retValue := common.BaseResource(false, SelfInvalidParams, nil, "params format error")
-		return c.JSON(http.StatusOK, retValue)
-	}
-	collection := &models.Collection{
-		Address: collectionReq.TokenAddress,
-	}
-	dbCollection, err := collection.GetCollectionById(as.Cfg.Database.Db)
-	if err != nil {
-		retValue := common.BaseResource(true, SelfServiceError, nil, "no this collection in system")
-		return c.JSON(http.StatusOK, retValue)
-	}
-	collectionDaily := &models.CollectionDaily{
-		CollectionId: dbCollection.Id,
-	}
-	cltDailyList, _ := collectionDaily.GetDailyCollectionListById(collectionReq.DailyPage, collectionReq.DailyPageSize, as.Cfg.Database.Db)
-	var cltDailyArray []types.CollectionDailyList
-	for _, key := range cltDailyList {
-		cltDailyArray = append(
-			cltDailyArray,
-			types.CollectionDailyList{
-				TotalHolder:             key.TotalHolder,
-				AverageHolder:           key.AverageHolder,
-				TotalGiantWhaleHolder:   key.TotalGiantWhaleHolder,
-				AverageGiantWhaleHolder: key.AverageGiantWhaleHolder,
-				TotalTxn:                key.TotalTxn,
-				AverageTxn:              key.AverageTxn,
-				AveragePrice:            key.AveragePrice,
-				TotalPrice:              key.TotalPrice,
-				DateTime:                key.DateTime,
-			},
-		)
-	}
-	resultRet := &types.CollectionInfo{
-		Name:                    dbCollection.Name,
-		Address:                 dbCollection.Address,
-		Introduce:               dbCollection.Introduce,
-		TotalHolder:             dbCollection.TotalHolder,
-		AverageHolder:           dbCollection.AverageHolder,
-		TotalGiantWhaleHolder:   dbCollection.TotalGiantWhaleHolder,
-		AverageGiantWhaleHolder: dbCollection.AverageGiantWhaleHolder,
-		TotalTxn:                dbCollection.TotalTxn,
-		AverageTxn:              dbCollection.AverageTxn,
-		AveragePrice:            dbCollection.AveragePrice,
-		TotalPrice:              dbCollection.TotalPrice,
-		SuggestLevel:            dbCollection.SuggestLevel,
-		CollectionDaily:         cltDailyArray,
-	}
-	retValue := common.BaseResource(true, SelfServiceOK, resultRet, "get address info success")
-	return c.JSON(http.StatusOK, retValue)
+func (as *ApiService) GetHotCollectionList(c echo.Context) error {
+	return c.JSON(http.StatusOK, "retValue")
 }
 
-func (as *ApiService) GetNftInfo(c echo.Context) error {
-	var nftReq types.NftReq
-	if err := c.Bind(&nftReq); err != nil {
-		retValue := common.BaseResource(false, SelfInvalidParams, nil, "params format error")
-		return c.JSON(http.StatusOK, retValue)
-	}
-	nft := &models.Nft{
-		TokenId: nftReq.TokenId,
-	}
-	dbNft, err := nft.GetNftById(as.Cfg.Database.Db)
-	if err != nil {
-		retValue := common.BaseResource(true, SelfServiceError, nil, "no this nft in system")
-		return c.JSON(http.StatusOK, retValue)
-	}
-	nftInfo := &models.NftDaily{NftId: dbNft.Id}
-	nftList, _ := nftInfo.GetDailyANftListById(nftReq.Page, nftReq.PageSize, as.Cfg.Database.Db)
-	var nftArr []types.NftDailyStat
-	for _, key := range nftList {
-		nds := types.NftDailyStat{
-			NftId:                 key.NftId,
-			TotalTxn:              key.TotalTxn,
-			TotalHolder:           key.TotalHolder,
-			TotalGiantWhaleHolder: key.TotalGiantWhaleHolder,
-			LatestPrice:           key.LatestPrice,
-			DateTime:              key.DateTime,
-		}
-		nftArr = append(nftArr, nds)
-	}
-	nftAddress := &models.NftAddress{NftId: dbNft.Id}
-	nftAddrList, _ := nftAddress.GetNftAddressListById(nftReq.Page, nftReq.PageSize, as.Cfg.Database.Db)
-	var holderList []types.CurrentHolder
-	var holderHistoryList []types.HistoricalHolderList
-	for _, key := range nftAddrList {
-		addr := models.Addresses{
-			Id: key.AddressId,
-		}
-		dbAddress, _ := addr.GetAddressById(as.Cfg.Database.Db)
-		log.Info("key.IsCurrent", "key.IsCurrent", key.IsCurrent)
-		if key.IsCurrent != 0 {
-			holderList = append(
-				holderList,
-				types.CurrentHolder{
-					AddressId: dbAddress.Id,
-					Address:   dbAddress.Address,
-					Label:     dbAddress.Label,
-				},
-			)
-		} else {
-			holderHistoryList = append(
-				holderHistoryList,
-				types.HistoricalHolderList{
-					AddressId: dbAddress.Id,
-					Address:   dbAddress.Address,
-					Label:     dbAddress.Label,
-				},
-			)
-		}
-	}
-	nftInfos := &types.NftInfo{
-		Id:                    dbNft.Id,
-		Address:               dbNft.Address,
-		TokenId:               dbNft.TokenId,
-		TokenUrl:              dbNft.TokenUrl,
-		TotalTxn:              dbNft.TotalTxn,
-		TotalHolder:           dbNft.TotalHolder,
-		TotalGiantWhaleHolder: dbNft.TotalGiantWhaleHolder,
-		LatestPrice:           dbNft.LatestPrice,
-		SuggestLevel:          dbNft.SuggestLevel,
-		NftDaily:              nftArr,
-		CurrentHolder:         holderList,
-		HistoricalHolder:      holderHistoryList,
-	}
-	retValue := common.BaseResource(true, SelfServiceOK, nftInfos, "get nft info success")
-	return c.JSON(http.StatusOK, retValue)
+func (as *ApiService) GetHotCollectionDetail(c echo.Context) error {
+	return c.JSON(http.StatusOK, "retValue")
+}
+
+func (as *ApiService) GetLiveMintList(c echo.Context) error {
+	return c.JSON(http.StatusOK, "retValue")
 }

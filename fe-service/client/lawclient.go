@@ -42,8 +42,9 @@ func NewLawClient(cfg *LawClientConfig) (*LawClient, error) {
 	}, nil
 }
 
-func (lc *LawClient) GetGiantWhaleWalletAddressLaw() (interface{}, error) {
-	gwLaw, err := lc.Client.GetGiantWhaleWalletAddressLaw(lc.Ctx, nil)
+func (lc *LawClient) GetGiantWhaleWalletAddressLaw() (*protobuf.GiantWhaleWalletAddressLawRep, error) {
+	gwwReq := &protobuf.GiantWhaleWalletAddressLawReq{}
+	gwLaw, err := lc.Client.GetGiantWhaleWalletAddressLaw(lc.Ctx, gwwReq)
 	if err != nil {
 		log.Error("get giant whale wallet address law fail")
 		return nil, err
@@ -51,8 +52,9 @@ func (lc *LawClient) GetGiantWhaleWalletAddressLaw() (interface{}, error) {
 	return gwLaw, nil
 }
 
-func (lc *LawClient) GetNftCollectionsLaw() (interface{}, error) {
-	nftCollectionLaw, err := lc.Client.GetNftCollectionsLaw(lc.Ctx, nil)
+func (lc *LawClient) GetNftCollectionsLaw() (*protobuf.NftCollectionsLawRep, error) {
+	nclReq := &protobuf.NftCollectionsLawReq{}
+	nftCollectionLaw, err := lc.Client.GetNftCollectionsLaw(lc.Ctx, nclReq)
 	if err != nil {
 		log.Error("get nft collection law fail")
 		return nil, err
@@ -60,8 +62,9 @@ func (lc *LawClient) GetNftCollectionsLaw() (interface{}, error) {
 	return nftCollectionLaw, nil
 }
 
-func (lc *LawClient) GetSingleNftLaw() (interface{}, error) {
-	singleNftLaw, err := lc.Client.GetSingleNftLaw(lc.Ctx, nil)
+func (lc *LawClient) GetSingleNftLaw() (*protobuf.SingleNftLawRep, error) {
+	singleReq := &protobuf.SingleNftLawReq{}
+	singleNftLaw, err := lc.Client.GetSingleNftLaw(lc.Ctx, singleReq)
 	if err != nil {
 		log.Error("get single nft law fail")
 		return nil, err

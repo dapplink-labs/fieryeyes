@@ -40,13 +40,17 @@ func NewDatabase(ctx context.Context, cfg *DatabaseConfig) (*Database, error) {
 func (d *Database) MigrateDb() error {
 	if err := d.Db.AutoMigrate(
 		&models.Addresses{},
+		&models.Chain{},
 		&models.Collection{},
-		&models.CollectionDaily{},
+		&models.CollectionStat{},
+		&models.CollectWhale{},
 		&models.DailyAddress{},
 		&models.MainToken{},
 		&models.Nft{},
-		&models.NftAddress{},
-		&models.NftDaily{},
+		&models.NftHolder{},
+		&models.NftStat{},
+		&models.NftTxn{},
+		&models.ShadowScore{},
 		&models.TokenPrice{},
 	); err != nil {
 		log.WithError(err).Fatal("Failed to migrate database")

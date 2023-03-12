@@ -45,10 +45,11 @@ func NewApiService(ctx context.Context, cfg *ApiConfig) (*ApiService, error) {
 }
 
 func (as *ApiService) routes() {
-	as.Echo.GET("openapi/v1/GetMainTokenPrice", as.GetMainTokenPrice)
-	as.Echo.POST("openapi/v1/getAddressInfo", as.GetAddressInfo)
-	as.Echo.POST("openapi/v1/getNftCollectionsInfo", as.GetNftCollectionsInfo)
-	as.Echo.POST("openapi/v1/getNftInfo", as.GetNftInfo)
+	as.Echo.GET("api/v1/GetMainToken", as.GetMainToken)
+	as.Echo.GET("api/v1/GetIndex", as.GetIndex)
+	as.Echo.GET("api/v1/GetHotCollectionList", as.GetHotCollectionList)
+	as.Echo.GET("api/v1/GetHotCollectionDetail", as.GetHotCollectionDetail)
+	as.Echo.GET("api/v1/GetLiveMintList", as.GetLiveMintList)
 }
 
 func (as *ApiService) Start() error {
