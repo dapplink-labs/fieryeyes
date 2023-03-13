@@ -1,6 +1,7 @@
 
 import mongoose from 'mongoose';
-const db = mongoose.createConnection('mongodb://127.0.0.1:27017/nft');
+import config from "../../config/index";
+const db = mongoose.createConnection(config.mongoHost);
 const { Schema } = mongoose;
 
 const ShadowSchema = new Schema({
@@ -11,7 +12,7 @@ const ShadowSchema = new Schema({
     heat: String,
     activeCommunity: String,
     Reliability: String,
-    updated: { type: Date, default: Date.now } 
+    updated: { type: Date, default: Date.now }
 })
 
 const Shadow = db.model('Shadow', ShadowSchema);

@@ -1,6 +1,7 @@
 
 import mongoose from 'mongoose';
-const db = mongoose.createConnection('mongodb://127.0.0.1:27017/nft');
+import config from "../../config/index";
+const db = mongoose.createConnection(config.mongoHost);
 const { Schema } = mongoose;
 
 const NftSchema = new Schema({
@@ -15,7 +16,7 @@ const NftSchema = new Schema({
     price: String,
     sevenDayShadowPrice: [String],
     listed: String,
-    updated: { type: Date, default: Date.now } 
+    updated: { type: Date, default: Date.now }
 })
 
 const Nft = db.model('Nft', NftSchema);

@@ -1,6 +1,7 @@
 
 import mongoose from 'mongoose';
-const db = mongoose.createConnection('mongodb://127.0.0.1:27017/nft');
+import config from "../../config/index";
+const db = mongoose.createConnection(config.mongoHost);
 const { Schema } = mongoose;
 
 const ChartSchema = new Schema({
@@ -21,7 +22,7 @@ const ChartSchema = new Schema({
         value: String,
         perChange: String
     }],
-    created: { type: Date, default: Date.now } 
+    created: { type: Date, default: Date.now }
 })
 
 const Chart = db.model('Chart', ChartSchema);

@@ -1,6 +1,7 @@
 
 import mongoose from 'mongoose';
-const db = mongoose.createConnection('mongodb://127.0.0.1:27017/nft');
+import config from "../../config/index";
+const db = mongoose.createConnection(config.mongoHost);
 const { Schema } = mongoose;
 
 const CollectionSchema = new Schema({
@@ -45,7 +46,8 @@ const CollectionSchema = new Schema({
     },
     trading: {
         price: [
-            {   price: String,
+            {
+                price: String,
                 time: String,
                 ccy: String
             }
@@ -71,7 +73,7 @@ const CollectionSchema = new Schema({
     stars: String,
     uniqueHoldersChanges: String,
     desc: String,
-    updated: { type: Date, default: Date.now } 
+    updated: { type: Date, default: Date.now }
 });
 
 const Collection = db.model('Collection', CollectionSchema);
