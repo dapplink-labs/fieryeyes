@@ -22,6 +22,8 @@ type Collection struct {
 
 type CollectionDetailReq struct {
 	CollectionId uint64 `json:"collection_id"`
+	Page         int    `json:"page"`
+	PageSize     int    `json:"page_size"`
 }
 
 type Trading struct {

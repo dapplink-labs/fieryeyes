@@ -186,9 +186,122 @@ func (as *ApiService) GetHotCollectionList(c echo.Context) error {
 }
 
 func (as *ApiService) GetHotCollectionDetail(c echo.Context) error {
-	return c.JSON(http.StatusOK, "retValue")
+	collect := models.Collection{}
+	collectStat := models.CollectionStat{}
+	holder := models.Holders{}
+	var cldIdReq types.CollectionDetailReq
+	if err := c.Bind(&cldIdReq); err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "invalid request params")
+		return c.JSON(http.StatusBadRequest, retValue)
+	}
+	collect.Id = cldIdReq.CollectionId
+	collectStat.Id = cldIdReq.CollectionId
+	clDatail, err := collect.GetCollectionById(as.Cfg.Database.Db)
+	if err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "get collection detail fail")
+		return c.JSON(http.StatusBadRequest, retValue)
+	}
+	clStatList, err := collectStat.GetDailyCollectionListById(cldIdReq.Page, cldIdReq.PageSize, as.Cfg.Database.Db)
+	if err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "get collection stat fail")
+		return c.JSON(http.StatusBadRequest, retValue)
+	}
+	var tradeList []types.Trading
+	var volumeList []types.Volume
+	var listList []types.List
+	var floorPriceList []types.FloorPrice
+	for _, value := range clStatList {
+		trade := types.Trading{
+			StatTime: value.DateTime,
+			Price:    value.TotalPrice,
+		}
+		tradeList = append(tradeList, trade)
+		volume := types.Volume{
+			StatTime: value.DateTime,
+			Volume:   value.TotalTxn,
+		}
+		volumeList = append(volumeList, volume)
+		list := types.List{
+			StatTime: value.DateTime,
+			PriceDis: value.AveragePrice,
+		}
+		listList = append(listList, list)
+		floorPrice := types.FloorPrice{
+			StatTime:   value.DateTime,
+			FloorPrice: value.FloorPrice,
+			BestOffer:  value.BestOffer,
+		}
+		floorPriceList = append(floorPriceList, floorPrice)
+	}
+	shadowScore := &types.ShadowScore{
+		BlueChip:        "95",
+		Fluidity:        "80",
+		Reliability:     "60",
+		CommunityActive: "70",
+		Heat:            "50",
+		PotentialIncome: "80",
+	}
+	whaleHolders, err := holder.GetWhaleHolderList(as.Cfg.Database.Db)
+	if err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "get live mint fail")
+		return c.JSON(http.StatusOK, retValue)
+	}
+	var WhaleHolderList []types.WhaleHolder
+	for _, value := range whaleHolders {
+		wHolder := types.WhaleHolder{
+			Address:            value.Address,
+			TotalValue:         value.TokenValue + value.NftValue,
+			HoldNftList:        nil,
+			HoldCollectionList: nil,
+			RealizePnl:         "10",
+			Label:              value.Label,
+		}
+		WhaleHolderList = append(WhaleHolderList, wHolder)
+	}
+	collectDtl := types.CollectionDetail{
+		Id:             clDatail.Id,
+		Name:           clDatail.Name,
+		Image:          "",
+		Creator:        clDatail.Creator,
+		Holder:         clDatail.TotalHolder,
+		Chain:          "Ethereum",
+		Introduce:      clDatail.Introduce,
+		ShadowScore:    shadowScore,
+		TradingList:    tradeList,
+		VolumeList:     volumeList,
+		ListList:       listList,
+		FloorPriceList: floorPriceList,
+		WhaleHolder:    WhaleHolderList,
+	}
+	retValue := common.BaseResource(true, SelfServiceOK, collectDtl, "success")
+	return c.JSON(http.StatusOK, retValue)
 }
 
 func (as *ApiService) GetLiveMintList(c echo.Context) error {
-	return c.JSON(http.StatusOK, "retValue")
+	collect := models.Collection{}
+	liveMints, err := collect.GetHotCollectionList(as.Cfg.Database.Db)
+	if err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "get live mint fail")
+		return c.JSON(http.StatusOK, retValue)
+	}
+	var liveMintArray []types.LiveMint
+	for _, value := range liveMints {
+		liveMint := types.LiveMint{
+			Id:               value.Id,
+			Rank:             1,
+			Image:            "",
+			Name:             value.Name,
+			Holder:           value.TotalHolder,
+			WhaleHolder:      value.TotalGiantWhaleHolder,
+			SuggestLevel:     int8(value.SuggestLevel),
+			Mint:             value.TotalMint,
+			MintPercent:      0.98,
+			TotalMint:        value.TotalMint,
+			TotalMintPercent: 0.98,
+			LastMintTime:     value.LastMintTime,
+		}
+		liveMintArray = append(liveMintArray, liveMint)
+	}
+	retValue := common.BaseResource(true, SelfServiceOK, liveMintArray, "get live mint success")
+	return c.JSON(http.StatusOK, retValue)
 }
