@@ -1,16 +1,18 @@
 package types
 
-type HotNft struct {
-	Id               uint64  `json:"id"`
-	Rank             uint64  `json:"rank"`
-	Image            string  `json:"image"`
-	Name             string  `json:"name"`
-	Holder           uint64  `json:"holder"`
-	WhaleHolder      uint64  `json:"whale_holder"`
-	SuggestLevel     int8    `json:"suggest_level"`
-	Mint             uint64  `json:"volume"`
-	MintPercent      float64 `json:"mint_percent"`
-	TotalMint        uint64  `json:"total_mint"`
-	TotalMintPercent float64 `json:"total_mint_percent"`
-	LastMintTime     string  `json:"last_mint_time"`
+type CollectionNftReq struct {
+	CollectId uint64 `json:"collect_id"`
+	Page      int    `json:"page"`
+	PageSize  int    `json:"page_size"`
+}
+
+type Nft struct {
+	Id        uint64 `json:"id"`
+	Image     string `json:"image"`
+	Name      string `json:"name"`
+	Chain     string `json:"chain"`
+	Holder    uint64 `json:"holder"`
+	HoldLabel string `json:"hold_label"`
+	Price     string `json:"price"`
+	UsdPrice  string `json:"usd_price"`
 }

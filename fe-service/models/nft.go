@@ -6,6 +6,9 @@ import (
 
 type Nft struct {
 	Id                    uint64 `json:"id" gorm:"primary_key;AUTO_INCREMENT"`
+	CollectionId          uint64 `json:"collect_id"`
+	Name                  string `gorm:"type:char(256)" json:"name"`
+	Image                 string `gorm:"type:char(256)" json:"image"`
 	Introduce             string `gorm:"type:text" json:"introduce"`
 	CurrentHolderId       uint64 `json:"current_holder_id"`
 	Creator               string `gorm:"type:char(128)" json:"creator"`
@@ -48,4 +51,12 @@ func (nft *Nft) GetNftById(db *gorm.DB) (*Nft, error) {
 		return nil, err
 	}
 	return newNft, nil
+}
+
+func (nft *Nft) GetNftListByCollectionId(page, pageSize int, db *gorm.DB) ([]Nft, error) {
+	var nftList []Nft
+	if err := db.Where("collection_id = ?", nft.CollectionId).Offset((page - 1) * pageSize).Limit(pageSize).Find(&nftList).Error; err != nil {
+		return nil, err
+	}
+	return nftList, nil
 }

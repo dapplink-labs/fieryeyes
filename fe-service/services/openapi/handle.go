@@ -305,3 +305,34 @@ func (as *ApiService) GetLiveMintList(c echo.Context) error {
 	retValue := common.BaseResource(true, SelfServiceOK, liveMintArray, "get live mint success")
 	return c.JSON(http.StatusOK, retValue)
 }
+
+func (as *ApiService) GetNftByCollectionId(c echo.Context) error {
+	nft := models.Nft{}
+	var cNftReq types.CollectionNftReq
+	if err := c.Bind(&cNftReq); err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "invalid request params")
+		return c.JSON(http.StatusBadRequest, retValue)
+	}
+	nft.CollectionId = cNftReq.CollectId
+	nfts, err := nft.GetNftListByCollectionId(cNftReq.Page, cNftReq.PageSize, as.Cfg.Database.Db)
+	if err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "get nft list fail")
+		return c.JSON(http.StatusOK, retValue)
+	}
+	var nftList []types.Nft
+	for _, value := range nfts {
+		nft := types.Nft{
+			Id:        value.Id,
+			Image:     "",
+			Name:      value.Name,
+			Chain:     "Ethereum",
+			Holder:    value.TotalHolder,
+			HoldLabel: "cz",
+			Price:     value.LatestPrice,
+			UsdPrice:  value.PriceToUsd,
+		}
+		nftList = append(nftList, nft)
+	}
+	retValue := common.BaseResource(true, SelfServiceOK, nftList, "get nft list success")
+	return c.JSON(http.StatusOK, retValue)
+}
