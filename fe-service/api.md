@@ -150,7 +150,7 @@ response
 }
 ```
 
-### 2. collections api
+### 2. collections list api
 
 request
 
@@ -215,3 +215,22 @@ response
 }
 ```
 
+### 3. collect detail
+
+request 
+
+``` curl
+curl --location --request POST 'http://127.0.0.1:8888/api/v1/GetHotCollectionDetail' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "collection_id": 1,
+    "page": 1,
+    "page_size": 10
+}'
+```
+
+response
+
+```json
+
+```

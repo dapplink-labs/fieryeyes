@@ -74,7 +74,7 @@ func (ct *Collection) GetCollectionList(page, pageSize int, orderBy int8, db *go
 
 func (ct *Collection) GetCollectionById(db *gorm.DB) (*Collection, error) {
 	var collection *Collection
-	if err := db.Where("address = ?", ct.Id).First(&collection).Error; err != nil {
+	if err := db.Where("id = ?", ct.Id).First(&collection).Error; err != nil {
 		return nil, err
 	}
 	return collection, nil

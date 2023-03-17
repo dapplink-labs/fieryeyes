@@ -204,7 +204,7 @@ func (as *ApiService) GetHotCollectionDetail(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, retValue)
 	}
 	collect.Id = cldIdReq.CollectionId
-	collectStat.Id = cldIdReq.CollectionId
+	collectStat.CollectionId = cldIdReq.CollectionId
 	clDatail, err := collect.GetCollectionById(as.Cfg.Database.Db)
 	if err != nil {
 		retValue := common.BaseResource(true, SelfServiceError, nil, "get collection detail fail")
