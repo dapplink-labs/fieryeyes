@@ -51,6 +51,8 @@ func (as *ApiService) routes() {
 	as.Echo.GET("api/v1/GetHotCollectionDetail", as.GetHotCollectionDetail)
 	as.Echo.GET("api/v1/GetLiveMintList", as.GetLiveMintList)
 	as.Echo.GET("api/v1/GetNftByCollectionId", as.GetNftByCollectionId)
+	as.Echo.GET("api/v1/GetNftById", as.GetNftById)
+
 }
 
 func (as *ApiService) Start() error {

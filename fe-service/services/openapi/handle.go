@@ -336,3 +336,58 @@ func (as *ApiService) GetNftByCollectionId(c echo.Context) error {
 	retValue := common.BaseResource(true, SelfServiceOK, nftList, "get nft list success")
 	return c.JSON(http.StatusOK, retValue)
 }
+
+func (as *ApiService) GetNftById(c echo.Context) error {
+	nft := models.Nft{}
+	nftTx := models.NftTxn{}
+	var nftReq types.NftDetailReq
+	if err := c.Bind(&nftReq); err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "invalid request params")
+		return c.JSON(http.StatusBadRequest, retValue)
+	}
+	nft.Id = nftReq.NftId
+	nftTx.NftId = nftReq.NftId
+	nftTx.TxType = nftReq.Type
+	nftDtl, err := nft.GetNftById(as.Cfg.Database.Db)
+	if err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "get nft detail fail")
+		return c.JSON(http.StatusOK, retValue)
+	}
+	nftTxn, err := nftTx.GetNftTxnList(nftReq.Page, nftReq.PageSize, as.Cfg.Database.Db)
+	if err != nil {
+		retValue := common.BaseResource(true, SelfServiceError, nil, "get nft tx list fail")
+		return c.JSON(http.StatusOK, retValue)
+	}
+	var nftTxnList []types.NftTx
+	for _, value := range nftTxn {
+		nftTx := types.NftTx{
+			FromAddr:  value.FromAddress,
+			ToAddr:    value.ToAddress,
+			Type:      value.TxType,
+			Price:     value.TradePrice,
+			TradeTime: value.DateTime,
+		}
+		nftTxnList = append(nftTxnList, nftTx)
+	}
+	nftDetail := types.NftDetail{
+		Id:          nftDtl.Id,
+		Image:       nftDtl.Image,
+		Name:        nftDtl.Name,
+		Chain:       "Ethereum",
+		Contract:    nftDtl.Address,
+		Creator:     nftDtl.Creator,
+		TokenUrl:    nftDtl.TokenUrl,
+		TokeId:      nftDtl.TokenId,
+		Describe:    nftDtl.Introduce,
+		MintHash:    nftDtl.MintTxHash,
+		MintTime:    nftDtl.MintTime,
+		Holder:      nftDtl.TotalHolder,
+		WhaleHolder: nftDtl.TotalGiantWhaleHolder,
+		Price:       nftDtl.LatestPrice,
+		UsdPrice:    nftDtl.PriceToUsd,
+		TotalTxn:    nftDtl.TotalTxn,
+		NftTxn:      nftTxnList,
+	}
+	retValue := common.BaseResource(true, SelfServiceOK, nftDetail, "get nft detail success")
+	return c.JSON(http.StatusOK, retValue)
+}

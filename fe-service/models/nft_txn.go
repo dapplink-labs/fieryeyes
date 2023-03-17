@@ -32,3 +32,11 @@ func (nt *NftTxn) SelfUpdate(db *gorm.DB) error {
 	}
 	return nil
 }
+
+func (nt *NftTxn) GetNftTxnList(page, pageSize int, db *gorm.DB) ([]NftTxn, error) {
+	var nftTxn []NftTxn
+	if err := db.Where("nft_id = ?", nt.NftId).Where("tx_type", nt.TxType).Offset((page - 1) * pageSize).Limit(pageSize).Find(&nftTxn).Error; err != nil {
+		return nil, err
+	}
+	return nftTxn, nil
+}
