@@ -150,7 +150,7 @@ response
 }
 ```
 
-### 1. collections api
+### 2. collections api
 
 request
 
@@ -166,25 +166,52 @@ curl --location --request POST 'http://193.203.215.185:8888/api/v1/GetHotCollect
 
 response
 
-```azure
+```json
 {
-    "status": true,
-    "code": 2000,
-    "msg": "success",
-    "data": [
-        {
-            "id": 1,
-            "rank": 1,
-            "image": "",
-            "name": "SavourDao",
-            "holder": 100,
-            "whale_holder": 1000,
-            "suggest_level": 4,
-            "volume": 11100,
-            "floor_price": "2.5",
-            "best_offer": "3",
-            "shadow_score": "10"
-        }
-    ]
+  "status": true,
+  "code": 2000,
+  "msg": "success",
+  "data": [
+    {
+      "id": 1,
+      "rank": 1,
+      "image": "https://logo.nftscan.com/logo/0x34eebee6942d8def3c125458d1a86e0a897fd6f9.png",
+      "name": "SavourDao",
+      "holder": 100,
+      "whale_holder": 10,
+      "suggest_level": 1,
+      "volume": 1000,
+      "floor_price": "10",
+      "best_offer": "20",
+      "shadow_score": "10"
+    },
+    {
+      "id": 2,
+      "rank": 2,
+      "image": "https://logo.nftscan.com/logo/0x34eebee6942d8def3c125458d1a86e0a897fd6f9.png",
+      "name": "Chaineye",
+      "holder": 100,
+      "whale_holder": 10,
+      "suggest_level": 1,
+      "volume": 1000,
+      "floor_price": "10",
+      "best_offer": "20",
+      "shadow_score": "10"
+    },
+    {
+      "id": 3,
+      "rank": 3,
+      "image": "https://logo.nftscan.com/logo/0x34eebee6942d8def3c125458d1a86e0a897fd6f9.png",
+      "name": "问我学院",
+      "holder": 100,
+      "whale_holder": 10,
+      "suggest_level": 1,
+      "volume": 1000,
+      "floor_price": "10",
+      "best_offer": "20",
+      "shadow_score": "10"
+    }
+  ]
 }
 ```
+
