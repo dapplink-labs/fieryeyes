@@ -9,6 +9,7 @@ type Collection struct {
 	Name                    string `gorm:"type:char(128)" json:"name"`
 	Creator                 string `gorm:"type:char(128)" json:"creator"`
 	ChainName               string `gorm:"type:char(128)" json:"chain_name"`
+	CollectionImage         string `gorm:"type:varchar(256)" json:"collection_image"`
 	Address                 string `gorm:"type:char(128)" json:"address"`
 	Introduce               string `gorm:"type:text" json:"introduce"`
 	TotalHolder             uint64 `json:"total_holder" gorm:"column:total_holder;default: 0;"`
