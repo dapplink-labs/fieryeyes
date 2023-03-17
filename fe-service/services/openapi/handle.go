@@ -177,8 +177,8 @@ func (as *ApiService) GetHotCollectionList(c echo.Context) error {
 	for _, value := range collectionArray {
 		hotC := types.Collection{
 			Id:           value.Id,
-			Rank:         1,
-			Image:        "",
+			Rank:         value.Rank,
+			Image:        value.CollectionImage,
 			Name:         value.Name,
 			Holder:       value.TotalHolder,
 			WhaleHolder:  value.TotalGiantWhaleHolder,
@@ -256,12 +256,21 @@ func (as *ApiService) GetHotCollectionDetail(c echo.Context) error {
 		return c.JSON(http.StatusOK, retValue)
 	}
 	var WhaleHolderList []types.WhaleHolder
+	imgS := []string{"https://logo.nftscan.com/logo/0x34eebee6942d8def3c125458d1a86e0a897fd6f9.png", "https://logo.nftscan.com/logo/0x34eebee6942d8def3c125458d1a86e0a897fd6f9.png"}
+	HoldNftList := &types.HoldNft{
+		TotalHold: 10,
+		Images:    imgS,
+	}
+	HoldCollectionList := &types.HoldCollection{
+		TotalHold: 10,
+		Images:    imgS,
+	}
 	for _, value := range whaleHolders {
 		wHolder := types.WhaleHolder{
 			Address:            value.Address,
 			TotalValue:         value.TokenValue + value.NftValue,
-			HoldNftList:        nil,
-			HoldCollectionList: nil,
+			HoldNftList:        HoldNftList,
+			HoldCollectionList: HoldCollectionList,
 			RealizePnl:         "10",
 			Label:              value.Label,
 		}
@@ -270,7 +279,7 @@ func (as *ApiService) GetHotCollectionDetail(c echo.Context) error {
 	collectDtl := types.CollectionDetail{
 		Id:             clDatail.Id,
 		Name:           clDatail.Name,
-		Image:          "",
+		Image:          clDatail.CollectionImage,
 		Creator:        clDatail.Creator,
 		Holder:         clDatail.TotalHolder,
 		Chain:          "Ethereum",
@@ -297,8 +306,8 @@ func (as *ApiService) GetLiveMintList(c echo.Context) error {
 	for _, value := range liveMints {
 		liveMint := types.LiveMint{
 			Id:               value.Id,
-			Rank:             1,
-			Image:            "",
+			Rank:             value.Rank,
+			Image:            value.CollectionImage,
 			Name:             value.Name,
 			Holder:           value.TotalHolder,
 			WhaleHolder:      value.TotalGiantWhaleHolder,
@@ -332,7 +341,7 @@ func (as *ApiService) GetNftByCollectionId(c echo.Context) error {
 	for _, value := range nfts {
 		nft := types.Nft{
 			Id:        value.Id,
-			Image:     "",
+			Image:     value.Image,
 			Name:      value.Name,
 			Chain:     "Ethereum",
 			Holder:    value.TotalHolder,
