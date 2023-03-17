@@ -453,3 +453,59 @@ response
 }
 ```
 
+### 6. get nft detail
+
+request
+
+```curl
+{
+    "nft_id": 1,
+    "type": 1,
+    "page": 1,
+    "page_size": 10
+}
+```
+
+response
+
+```json
+{
+    "status": true,
+    "code": 2000,
+    "msg": "get nft detail success",
+    "data": {
+        "id": 1,
+        "image": "https://solana.nftscan.com/static/no-preview.11455274.png",
+        "name": "savour labs seed nft",
+        "chain": "Ethereum",
+        "contract": "0xa9d1e08c7793af67e9d92fe308d5697fb81d3e43",
+        "creator": "0x4675c7e5baafbffbca748158becba61ef3b0a263",
+        "token_url": "http://savour.group",
+        "toke_id": "#11",
+        "describe": "savour labs logo",
+        "mint_hash": "0x668dd633ecdd9ce7df373edef28f48455d1a712c6000f7dedb05b2509f577b93",
+        "mint_time": "2022-10-11",
+        "holder": 1000,
+        "whale_holder": 100,
+        "price": "1000.00",
+        "usd_price": "7000.00",
+        "total_txn": 100,
+        "nft_txn": [
+            {
+                "from_addr": "0x4675c7e5baafbffbca748158becba61ef3b0a263",
+                "to_addr": "0x4675c7e5baafbffbca748158becba61ef3b0a261",
+                "type": 1,
+                "price": "100",
+                "trade_time": "2022-10-11"
+            },
+            {
+                "from_addr": "0x4675c7e5baafbffbc1248158becba61ef3b0a263",
+                "to_addr": "0x4675c7e5baafbffbca748158becba61ef3b0a123",
+                "type": 1,
+                "price": "100",
+                "trade_time": "2022-10-11"
+            }
+        ]
+    }
+}
+```
