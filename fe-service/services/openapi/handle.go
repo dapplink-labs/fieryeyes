@@ -78,8 +78,8 @@ func (as *ApiService) GetIndex(c echo.Context) error {
 	for _, value := range hotCollections {
 		hotC := types.Collection{
 			Id:           value.Id,
-			Rank:         1,
-			Image:        "",
+			Rank:         value.Rank,
+			Image:        value.CollectionImage,
 			Name:         value.Name,
 			Holder:       value.TotalHolder,
 			WhaleHolder:  value.TotalGiantWhaleHolder,
@@ -100,8 +100,8 @@ func (as *ApiService) GetIndex(c echo.Context) error {
 	for _, value := range liveMints {
 		lMint := types.LiveMint{
 			Id:               value.Id,
-			Rank:             1,
-			Image:            "",
+			Rank:             value.Rank,
+			Image:            value.CollectionImage,
 			Name:             value.Name,
 			Holder:           value.TotalHolder,
 			WhaleHolder:      value.TotalGiantWhaleHolder,
@@ -119,13 +119,22 @@ func (as *ApiService) GetIndex(c echo.Context) error {
 		retValue := common.BaseResource(true, SelfServiceError, nil, "get live mint fail")
 		return c.JSON(http.StatusOK, retValue)
 	}
+	imgS := []string{"https://logo.nftscan.com/logo/0x34eebee6942d8def3c125458d1a86e0a897fd6f9.png", "https://logo.nftscan.com/logo/0x34eebee6942d8def3c125458d1a86e0a897fd6f9.png"}
 	var WhaleHolderList []types.WhaleHolder
+	HoldNftList := &types.HoldNft{
+		TotalHold: 10,
+		Images:    imgS,
+	}
+	HoldCollectionList := &types.HoldCollection{
+		TotalHold: 10,
+		Images:    imgS,
+	}
 	for _, value := range whaleHolders {
 		wHolder := types.WhaleHolder{
 			Address:            value.Address,
 			TotalValue:         value.TokenValue + value.NftValue,
-			HoldNftList:        nil,
-			HoldCollectionList: nil,
+			HoldNftList:        HoldNftList,
+			HoldCollectionList: HoldCollectionList,
 			RealizePnl:         "10",
 			Label:              value.Label,
 		}

@@ -6,6 +6,7 @@ import (
 
 type Collection struct {
 	Id                      uint64 `json:"id" gorm:"primary_key;AUTO_INCREMENT"`
+	Rank                    uint64 `json:"rank"`
 	Name                    string `gorm:"type:char(128)" json:"name"`
 	Creator                 string `gorm:"type:char(128)" json:"creator"`
 	ChainName               string `gorm:"type:char(128)" json:"chain_name"`
