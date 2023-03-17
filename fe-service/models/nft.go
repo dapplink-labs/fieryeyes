@@ -47,7 +47,7 @@ func (nft *Nft) SelfUpdate(db *gorm.DB) error {
 
 func (nft *Nft) GetNftById(db *gorm.DB) (*Nft, error) {
 	var newNft *Nft
-	if err := db.Where("token_id = ?", nft.TokenId).First(&newNft).Error; err != nil {
+	if err := db.Where("id = ?", nft.Id).First(&newNft).Error; err != nil {
 		return nil, err
 	}
 	return newNft, nil
