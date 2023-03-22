@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/savour-labs/fieryeyes/fe-scrapy/db"
-	"github.com/savour-labs/fieryeyes/fe-scrapy/services"
+	"github.com/savour-labs/fieryeyes/fe-scrapy/scrapy"
 	"github.com/urfave/cli"
 	"os"
 	"strconv"
@@ -39,7 +39,7 @@ type SavourScrapy struct {
 	ctx       context.Context
 	cfg       Config
 	db        *db.Database
-	rpcServer *services.RPCServices
+	rpcServer *scrapy.RPCServices
 }
 
 func NewSavourScrapy(cfg Config) (*SavourScrapy, error) {
@@ -66,7 +66,7 @@ func NewSavourScrapy(cfg Config) (*SavourScrapy, error) {
 		log.Error("migrate db fail, err:", err)
 		return nil, err
 	}
-	rpcService, err := services.NewRPCServices(dbd, cfg.RPCHostname, strconv.FormatUint(cfg.RPCPort, 10))
+	rpcService, err := scrapy.NewRPCServices(dbd, cfg.RPCHostname, strconv.FormatUint(cfg.RPCPort, 10))
 	if err != nil {
 		log.Error("new rpc server fail, err:", err)
 		return nil, err

@@ -48,6 +48,24 @@ var (
 		Required: true,
 		EnvVar:   prefixEnvVar("DB_NAME"),
 	}
+	DuneClientUrlFlag = cli.StringFlag{
+		Name:     "dune-client-url",
+		Usage:    "scrapy oklink website data",
+		Required: false,
+		EnvVar:   prefixEnvVar("DUNE_CLIENT_URL"),
+	}
+	DuneResultIdFlag = cli.StringFlag{
+		Name:     "dune-result-id",
+		Usage:    "scrapy oklink website data",
+		Required: false,
+		EnvVar:   prefixEnvVar("DUNE_RESULT_ID"),
+	}
+	DuneErrorIdFlag = cli.StringFlag{
+		Name:     "dune-error-id",
+		Usage:    "scrapy oklink website data",
+		Required: false,
+		EnvVar:   prefixEnvVar("DUNE_ERROR_ID"),
+	}
 
 	/* Optional Flags */
 	OkLinkFlag = cli.StringFlag{
@@ -119,6 +137,9 @@ var requiredFlags = []cli.Flag{
 	DBUserFlag,
 	DBPasswordFlag,
 	DBNameFlag,
+	DuneClientUrlFlag,
+	DuneResultIdFlag,
+	DuneErrorIdFlag,
 }
 
 var optionalFlags = []cli.Flag{

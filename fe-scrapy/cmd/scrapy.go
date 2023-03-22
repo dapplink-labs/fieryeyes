@@ -28,9 +28,9 @@ func main() {
 	app := cli.NewApp()
 	app.Flags = flags.Flags
 	app.Version = fmt.Sprintf("%s-%s", GitVersion, params.VersionWithCommit(GitCommit, GitDate))
-	app.Name = "indexer"
-	app.Usage = "Indexer Service"
-	app.Description = "Service for indexing nft data"
+	app.Name = "scrapy"
+	app.Usage = "Scrapy Service"
+	app.Description = "Service for Scrapy address and nft data"
 	app.Action = fe_scrapy.Main(GitVersion)
 	err := app.Run(os.Args)
 	if err != nil {
