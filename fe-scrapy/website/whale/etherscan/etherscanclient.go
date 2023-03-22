@@ -26,7 +26,7 @@ func NewEtherClient(cfg *EtherClientConfig) *EtherClient {
 	}
 }
 
-func (ec *EtherClient) collEtherLabelAddress() (*colly.HTMLElement, error) {
+func (ec *EtherClient) CollEtherLabelAddress() (*colly.HTMLElement, error) {
 	c := colly.NewCollector()
 	extensions.RandomUserAgent(c)
 	extensions.Referer(c)
