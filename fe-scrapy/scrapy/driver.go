@@ -115,7 +115,7 @@ func (ds DriverScapy) dealEtherScan() {
 }
 
 func (ds DriverScapy) Run() {
-	ds.dealDune()
-	ds.dealOkLink()
+	// ds.dealDune()
+	// ds.dealOkLink()
 	ds.dealEtherScan()
 }

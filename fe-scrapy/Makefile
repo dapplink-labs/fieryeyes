@@ -14,8 +14,8 @@ COMMONPATH := "github.com/savour-labs/key-locker/proto/common"
 
 
 fe-scrapy:
-	env GO111MODULE=on go build $(LDFLAGS)
-.PHONY: sav-scrapy
+	env GO111MODULE=on go build $(LDFLAGS) ./cmd/fe-scrapy
+.PHONY: fe-scrapy
 
 clean:
 	rm fe-scrapy

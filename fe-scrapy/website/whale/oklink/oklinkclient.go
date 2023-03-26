@@ -45,7 +45,7 @@ func NewOkClient(cfg *OkClientConfig) *OkClient {
 }
 
 func (c *OkClient) GetWhaleAddress() ([]whale.AddressLabel, error) {
-	response, err := c.client.R().SetHeader("Ok-Access-Key", c.cfg.OkAccessKey).Get("api/v5/explorer/address/rich-list?chainShortName=eth")
+	response, err := c.client.R().SetHeader("Ok-Access-Key", c.cfg.OkAccessKey).Get("/api/v5/explorer/address/rich-list?chainShortName=eth")
 	if err != nil {
 		return nil, fmt.Errorf("cannot fetch whale address: %w", err)
 	}

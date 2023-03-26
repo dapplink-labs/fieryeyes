@@ -4,7 +4,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-const envVarPrefix = "INDEXER_"
+const envVarPrefix = "FE_SCRAPY_"
 
 func prefixEnvVar(name string) string {
 	return envVarPrefix + name
@@ -112,13 +112,13 @@ var (
 		EnvVar: prefixEnvVar("CONF_DEPTH"),
 	}
 	RPCHostnameFlag = cli.StringFlag{
-		Name:   "RPC-hostname",
+		Name:   "rpc-hostname",
 		Usage:  "The hostname of the RPC server",
 		Value:  "127.0.0.1",
 		EnvVar: prefixEnvVar("RPC_HOSTNAME"),
 	}
 	RPCPortFlag = cli.Uint64Flag{
-		Name:   "RPC-port",
+		Name:   "rpc-port",
 		Usage:  "The port of the RPC server",
 		Value:  8080,
 		EnvVar: prefixEnvVar("RPC_PORT"),
