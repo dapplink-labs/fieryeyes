@@ -13,12 +13,12 @@ GENPATH := "./proto/common"
 COMMONPATH := "github.com/savour-labs/key-locker/proto/common"
 
 
-sav-scrapy:
+fe-scrapy:
 	env GO111MODULE=on go build $(LDFLAGS)
 .PHONY: sav-scrapy
 
 clean:
-	rm sav-scrapy
+	rm fe-scrapy
 
 test:
 	go test -v ./...

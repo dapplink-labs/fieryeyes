@@ -8,8 +8,8 @@ import (
 )
 
 type Database struct {
-	db     *gorm.DB
-	config string
+	Db     *gorm.DB
+	Config string
 }
 
 func NewDatabase(config string) (*Database, error) {
@@ -18,17 +18,17 @@ func NewDatabase(config string) (*Database, error) {
 		return nil, err
 	}
 	return &Database{
-		db:     db,
-		config: config,
+		Db:     db,
+		Config: config,
 	}, nil
 }
 
-func (d *Database) Config() string {
-	return d.config
+func (d *Database) ConfigInfo() string {
+	return d.Config
 }
 
 func (d *Database) MigrateDb() error {
-	if err := d.db.AutoMigrate(&models.Chain{}, &models.ContractAccount{}, &models.ChainAccount{}); err != nil {
+	if err := d.Db.AutoMigrate(&models.Chain{}, &models.ContractAccount{}, &models.ChainAccount{}); err != nil {
 		log.WithError(err).Fatal("Failed to migrate database")
 		return err
 	}

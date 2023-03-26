@@ -6,6 +6,9 @@ import (
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/savour-labs/fieryeyes/fe-scrapy/db"
 	"github.com/savour-labs/fieryeyes/fe-scrapy/scrapy"
+	"github.com/savour-labs/fieryeyes/fe-scrapy/website/whale/dune"
+	"github.com/savour-labs/fieryeyes/fe-scrapy/website/whale/etherscan"
+	"github.com/savour-labs/fieryeyes/fe-scrapy/website/whale/oklink"
 	"github.com/urfave/cli"
 	"os"
 	"strconv"
@@ -36,10 +39,11 @@ func Main(gitVersion string) func(ctx *cli.Context) error {
 }
 
 type SavourScrapy struct {
-	ctx       context.Context
-	cfg       Config
-	db        *db.Database
-	rpcServer *scrapy.RPCServices
+	ctx         context.Context
+	cfg         Config
+	db          *db.Database
+	rpcServer   *scrapy.RPCServices
+	driverScapy *scrapy.DriverScapy
 }
 
 func NewSavourScrapy(cfg Config) (*SavourScrapy, error) {
@@ -71,12 +75,38 @@ func NewSavourScrapy(cfg Config) (*SavourScrapy, error) {
 		log.Error("new rpc server fail, err:", err)
 		return nil, err
 	}
-	// todo: scrapy server new
+	duneCfg := &dune.DuneClientConfig{
+		ClientUrl: cfg.DuneClientUrl,
+		ResultId:  cfg.DuneResultId,
+		ErrorId:   cfg.DuneErrorId,
+	}
+	etherConfig := &etherscan.EtherClientConfig{
+		ClientUrl: cfg.EtherClient,
+	}
+	okConfig := &oklink.OkClientConfig{
+		ClientUrl:   cfg.EtherClient,
+		OkAccessKey: cfg.OkAccessKey,
+	}
+
+	dConfig := &scrapy.DriverScapyConfig{
+		DuneCfg:     duneCfg,
+		EtherConfig: etherConfig,
+		OkConfig:    okConfig,
+		DataBase:    dbd,
+	}
+
+	ds, err := scrapy.NewDriverScapy(dConfig)
+	if err != nil {
+		log.Error("new driver scrapy server fail, err:", err)
+		return nil, err
+	}
+
 	return &SavourScrapy{
-		ctx:       ctx,
-		cfg:       cfg,
-		db:        dbd,
-		rpcServer: rpcService,
+		ctx:         ctx,
+		cfg:         cfg,
+		db:          dbd,
+		rpcServer:   rpcService,
+		driverScapy: ds,
 	}, nil
 }
 
@@ -89,10 +119,10 @@ func (ss *SavourScrapy) Start() error {
 		log.Error("migrate database fail, err:", err)
 		return err
 	}
+	go ss.driverScapy.Run()
 	return ss.rpcServer.Start()
 }
 
 func (ss *SavourScrapy) Stop() {
-	// todo: service stop
 	log.Info("all fe scrapy stop")
 }

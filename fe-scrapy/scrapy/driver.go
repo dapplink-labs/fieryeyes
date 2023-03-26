@@ -2,11 +2,11 @@ package scrapy
 
 import (
 	"github.com/ethereum/go-ethereum/log"
+	"github.com/savour-labs/fieryeyes/fe-scrapy/db"
 	"github.com/savour-labs/fieryeyes/fe-scrapy/models"
 	"github.com/savour-labs/fieryeyes/fe-scrapy/website/whale/dune"
 	"github.com/savour-labs/fieryeyes/fe-scrapy/website/whale/etherscan"
 	"github.com/savour-labs/fieryeyes/fe-scrapy/website/whale/oklink"
-	"github.com/savour-labs/fieryeyes/fe-service/db"
 )
 
 type DriverScapyConfig struct {
@@ -114,7 +114,7 @@ func (ds DriverScapy) dealEtherScan() {
 	}
 }
 
-func (ds DriverScapy) run() {
+func (ds DriverScapy) Run() {
 	ds.dealDune()
 	ds.dealOkLink()
 	ds.dealEtherScan()

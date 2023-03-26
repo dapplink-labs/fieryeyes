@@ -22,6 +22,12 @@ type Config struct {
 	ConfDepth           uint64
 	RPCHostname         string
 	RPCPort             uint64
+	DuneClientUrl       string
+	DuneResultId        string
+	DuneErrorId         string
+	OkLinkClient        string
+	OkAccessKey         string
+	EtherClient         string
 	MetricsServerEnable bool
 	MetricsHostname     string
 	MetricsPort         uint64
@@ -29,13 +35,18 @@ type Config struct {
 
 func NewConfig(ctx *cli.Context) (Config, error) {
 	cfg := Config{
-		DBHost:     ctx.GlobalString(flags.DBHostFlag.Name),
-		DBPort:     ctx.GlobalUint64(flags.DBPortFlag.Name),
-		DBUser:     ctx.GlobalString(flags.DBUserFlag.Name),
-		DBPassword: ctx.GlobalString(flags.DBPasswordFlag.Name),
-		DBName:     ctx.GlobalString(flags.DBNameFlag.Name),
+		DBHost:        ctx.GlobalString(flags.DBHostFlag.Name),
+		DBPort:        ctx.GlobalUint64(flags.DBPortFlag.Name),
+		DBUser:        ctx.GlobalString(flags.DBUserFlag.Name),
+		DBPassword:    ctx.GlobalString(flags.DBPasswordFlag.Name),
+		DBName:        ctx.GlobalString(flags.DBNameFlag.Name),
+		DuneClientUrl: ctx.GlobalString(flags.DuneClientUrlFlag.Name),
+		DuneResultId:  ctx.GlobalString(flags.DuneResultIdFlag.Name),
+		DuneErrorId:   ctx.GlobalString(flags.DuneErrorIdFlag.Name),
+		OkLinkClient:  ctx.GlobalString(flags.OkLinkClientFlag.Name),
+		OkAccessKey:   ctx.GlobalString(flags.OkAccessKeyFlag.Name),
+		EtherClient:   ctx.GlobalString(flags.EtherClientFlag.Name),
 		/* Optional Flags */
-		OkLink:              ctx.GlobalString(flags.OkLinkFlag.Name),
 		DisableSavScrapy:    ctx.GlobalBool(flags.DisableSavScrapyFlag.Name),
 		LogLevel:            ctx.GlobalString(flags.LogLevelFlag.Name),
 		LogTerminal:         ctx.GlobalBool(flags.LogTerminalFlag.Name),

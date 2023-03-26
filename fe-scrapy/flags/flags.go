@@ -51,29 +51,41 @@ var (
 	DuneClientUrlFlag = cli.StringFlag{
 		Name:     "dune-client-url",
 		Usage:    "scrapy oklink website data",
-		Required: false,
+		Required: true,
 		EnvVar:   prefixEnvVar("DUNE_CLIENT_URL"),
 	}
 	DuneResultIdFlag = cli.StringFlag{
 		Name:     "dune-result-id",
 		Usage:    "scrapy oklink website data",
-		Required: false,
+		Required: true,
 		EnvVar:   prefixEnvVar("DUNE_RESULT_ID"),
 	}
 	DuneErrorIdFlag = cli.StringFlag{
 		Name:     "dune-error-id",
 		Usage:    "scrapy oklink website data",
-		Required: false,
+		Required: true,
 		EnvVar:   prefixEnvVar("DUNE_ERROR_ID"),
+	}
+	OkLinkClientFlag = cli.StringFlag{
+		Name:     "ok_link-client",
+		Usage:    "scrapy oklink website data",
+		Required: true,
+		EnvVar:   prefixEnvVar("OK_LINK_CLIENT"),
+	}
+	OkAccessKeyFlag = cli.StringFlag{
+		Name:     "ok_access_key",
+		Usage:    "ok access key",
+		Required: true,
+		EnvVar:   prefixEnvVar("OK_ACCESS_KEY"),
+	}
+	EtherClientFlag = cli.StringFlag{
+		Name:     "ether-client",
+		Usage:    "ether client website data",
+		Required: true,
+		EnvVar:   prefixEnvVar("ETHER_CLIENT"),
 	}
 
 	/* Optional Flags */
-	OkLinkFlag = cli.StringFlag{
-		Name:     "scrapy-oklink",
-		Usage:    "scrapy oklink website data",
-		Required: false,
-		EnvVar:   prefixEnvVar("OKLINK"),
-	}
 	DisableSavScrapyFlag = cli.BoolFlag{
 		Name:     "disable-sav-scrapy",
 		Usage:    "Whether or not to enable the sav-scrapy on this instance",
@@ -140,10 +152,12 @@ var requiredFlags = []cli.Flag{
 	DuneClientUrlFlag,
 	DuneResultIdFlag,
 	DuneErrorIdFlag,
+	OkLinkClientFlag,
+	OkAccessKeyFlag,
+	EtherClientFlag,
 }
 
 var optionalFlags = []cli.Flag{
-	OkLinkFlag,
 	DisableSavScrapyFlag,
 	LogLevelFlag,
 	LogTerminalFlag,
