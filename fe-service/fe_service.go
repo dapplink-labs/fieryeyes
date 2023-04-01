@@ -2,14 +2,16 @@ package fe_service
 
 import (
 	"context"
+	"os"
+	"strconv"
+
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/savour-labs/fieryeyes/fe-service/db"
 	"github.com/savour-labs/fieryeyes/fe-service/services/indexer"
 	"github.com/savour-labs/fieryeyes/fe-service/services/internalrpc"
 	"github.com/savour-labs/fieryeyes/fe-service/services/openapi"
+	"github.com/savour-labs/fieryeyes/fe-service/services/score"
 	"github.com/urfave/cli"
-	"os"
-	"strconv"
 )
 
 func Main(gitVersion string) func(ctx *cli.Context) error {
@@ -48,6 +50,7 @@ type FeService struct {
 	apiService          *openapi.ApiService
 	internalRpcServices *internalrpc.InternalRpcServices
 	feServiceIndexer    *indexer.FeServiceIndexer
+	feServiceScore      *score.FeServiceScore
 	db                  *db.Database
 	// metrics             *metrics.Metrics
 }
@@ -118,6 +121,16 @@ func NewFeService(cfg Config) (*FeService, error) {
 		return nil, err
 	}
 
+	// new score service
+	feServiceScoreConfig := &score.FeServiceScoreConfig{
+		LoopInterval: cfg.LoopInterval,
+	}
+	feServiceScore, err := score.NewFeServiceScore(ctx, feServiceScoreConfig)
+	if err != nil {
+		log.Error("new fe services score fail", "err", err)
+		return nil, err
+	}
+
 	feServiceConfig := &indexer.FeServiceIndexerConfig{
 		IndexerRpcSocket: cfg.IndexerSocket,
 		LoopInterval:     cfg.LoopInterval,
@@ -134,6 +147,7 @@ func NewFeService(cfg Config) (*FeService, error) {
 		apiService:          apiService,
 		internalRpcServices: iRpcServices,
 		feServiceIndexer:    feService,
+		feServiceScore:      feServiceScore,
 		db:                  dbSelf,
 		// metrics:             m,
 	}, nil
@@ -151,6 +165,12 @@ func (fs *FeService) Start() error {
 		err := fs.internalRpcServices.Start()
 		if err != nil {
 			log.Error("api service failed to start", "err", err)
+		}
+	}()
+	go func() {
+		err := fs.feServiceScore.Start()
+		if err != nil {
+			log.Error("fe score service failed to start", "err", err)
 		}
 	}()
 	err := fs.feServiceIndexer.Start()
