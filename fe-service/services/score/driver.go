@@ -49,6 +49,7 @@ func (fsi *FeServiceScore) EventLoop() {
 		select {
 		case <-ticker.C:
 			log.Info("calc collection score")
+			go fsi.CalcScores()
 		case err := <-fsi.Ctx.Done():
 			log.Error("event loop exit, fail reason", "err", err)
 			return
