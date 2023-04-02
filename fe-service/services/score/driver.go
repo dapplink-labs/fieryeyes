@@ -6,42 +6,44 @@ import (
 	"time"
 
 	"github.com/ethereum/go-ethereum/log"
+	"github.com/savour-labs/fieryeyes/fe-service/db"
 	"github.com/savour-labs/fieryeyes/fe-service/services/common"
 )
 
-type FeServiceScoreConfig struct {
+type FeScoreServiceConfig struct {
 	LoopInterval time.Duration
+	Database     *db.Database
 }
 
-type FeServiceScore struct {
+type FeScoreService struct {
 	Ctx    context.Context
-	Cfg    *FeServiceScoreConfig
+	Cfg    *FeScoreServiceConfig
 	Cancel func()
 	Wg     sync.WaitGroup
 }
 
-func NewFeServiceScore(ctx context.Context, cfg *FeServiceScoreConfig) (*FeServiceScore, error) {
+func NewFeScoreService(ctx context.Context, cfg *FeScoreServiceConfig) (*FeScoreService, error) {
 	_, cancel := context.WithTimeout(ctx, common.DefaultTimeout)
 	defer cancel()
-	return &FeServiceScore{
+	return &FeScoreService{
 		Ctx:    ctx,
 		Cfg:    cfg,
 		Cancel: cancel,
 	}, nil
 }
 
-func (fsi *FeServiceScore) Start() error {
+func (fsi *FeScoreService) Start() error {
 	fsi.Wg.Add(1)
 	go fsi.EventLoop()
 	return nil
 }
 
-func (fsi *FeServiceScore) Stop() {
+func (fsi *FeScoreService) Stop() {
 	fsi.Cancel()
 	fsi.Wg.Wait()
 }
 
-func (fsi *FeServiceScore) EventLoop() {
+func (fsi *FeScoreService) EventLoop() {
 	defer fsi.Wg.Done()
 	ticker := time.NewTicker(fsi.Cfg.LoopInterval)
 	defer ticker.Stop()

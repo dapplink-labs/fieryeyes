@@ -1,12 +1,22 @@
 package score
 
 import (
+	"fmt"
+
 	"github.com/ethereum/go-ethereum/log"
+	"github.com/savour-labs/fieryeyes/fe-service/models"
 )
 
-func (as *FeServiceScore) CalcScores() error {
+func (as *FeScoreService) CalcScores() error {
 	log.Info("begin to calc scores")
 	// get all collection infos from db
+	collectionModel := models.Collection{}
+	collectionList, err := collectionModel.GetCollectionList(1, 100000, 1, as.Cfg.Database.Db)
+	if err != nil {
+		log.Error("GetCollectionList error", err.Error())
+		return err
+	}
+	fmt.Println("collectionList", collectionList)
 
 	// calc BlueChip
 

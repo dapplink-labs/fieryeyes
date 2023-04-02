@@ -50,7 +50,7 @@ type FeService struct {
 	apiService          *openapi.ApiService
 	internalRpcServices *internalrpc.InternalRpcServices
 	feServiceIndexer    *indexer.FeServiceIndexer
-	feServiceScore      *score.FeServiceScore
+	feScoreService      *score.FeScoreService
 	db                  *db.Database
 	// metrics             *metrics.Metrics
 }
@@ -122,12 +122,13 @@ func NewFeService(cfg Config) (*FeService, error) {
 	}
 
 	// new score service
-	feServiceScoreConfig := &score.FeServiceScoreConfig{
+	feScoreServiceConfig := &score.FeScoreServiceConfig{
 		LoopInterval: cfg.LoopInterval,
+		Database:     dbSelf,
 	}
-	feServiceScore, err := score.NewFeServiceScore(ctx, feServiceScoreConfig)
+	feScoreService, err := score.NewFeScoreService(ctx, feScoreServiceConfig)
 	if err != nil {
-		log.Error("new fe services score fail", "err", err)
+		log.Error("new fe score service fail", "err", err)
 		return nil, err
 	}
 
@@ -147,7 +148,7 @@ func NewFeService(cfg Config) (*FeService, error) {
 		apiService:          apiService,
 		internalRpcServices: iRpcServices,
 		feServiceIndexer:    feService,
-		feServiceScore:      feServiceScore,
+		feScoreService:      feScoreService,
 		db:                  dbSelf,
 		// metrics:             m,
 	}, nil
@@ -168,7 +169,7 @@ func (fs *FeService) Start() error {
 		}
 	}()
 	go func() {
-		err := fs.feServiceScore.Start()
+		err := fs.feScoreService.Start()
 		if err != nil {
 			log.Error("fe score service failed to start", "err", err)
 		}
