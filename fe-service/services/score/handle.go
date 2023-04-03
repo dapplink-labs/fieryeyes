@@ -20,25 +20,25 @@ func (as *FeScoreService) CalcScores() error {
 	log.Info("collectionList Len", len(collectionList))
 	for _, item := range collectionList {
 		log.Info("collectionList item", item)
+
+		// calc BlueChip
 		bluceChip, err := calcBlueChip(item.TotalGiantWhaleHolder, item.TotalHolder)
 		if err != nil {
 			log.Error("calcBlueChip error", err.Error())
 			continue
 		}
 		log.Info("bluceChip", bluceChip)
+
+		// calc Fluidity
+
+		// calc Reliability
+
+		// calc CommunityActive
+
+		// calc Heat
+
+		// calc PotentialIncome
 	}
-
-	// calc BlueChip
-
-	// calc Fluidity
-
-	// calc Reliability
-
-	// calc CommunityActive
-
-	// calc Heat
-
-	// calc PotentialIncome
 
 	return nil
 }
