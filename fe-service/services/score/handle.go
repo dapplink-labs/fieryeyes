@@ -17,17 +17,17 @@ func (as *FeScoreService) CalcScores() error {
 		log.Error("GetCollectionList error", err.Error())
 		return err
 	}
-	log.Info("collectionList Len", len(collectionList))
+	fmt.Println("collectionList Len", len(collectionList))
 	for _, item := range collectionList {
-		log.Info("collectionList item", item)
+		fmt.Println("collectionList item", item)
 
 		// calc BlueChip
 		bluceChip, err := calcBlueChip(item.TotalGiantWhaleHolder, item.TotalHolder)
 		if err != nil {
-			log.Error("calcBlueChip error", err.Error())
+			fmt.Println("calcBlueChip error", err.Error())
 			continue
 		}
-		log.Info("bluceChip", bluceChip)
+		fmt.Println("bluceChip", bluceChip)
 
 		// calc Fluidity
 
@@ -44,7 +44,8 @@ func (as *FeScoreService) CalcScores() error {
 }
 
 func calcBlueChip(totalGiantWhaleHolder uint64, totalHolder uint64) (string, error) {
-	blueChip := totalGiantWhaleHolder / totalHolder * 100
+	blueChip := (totalGiantWhaleHolder * 100 / totalHolder)
+	// fmt.Println(totalGiantWhaleHolder, totalHolder, blueChip)
 	blueChip = uint64(math.Ceil(float64(blueChip)))
 	return fmt.Sprintf("%v", blueChip), nil
 }
