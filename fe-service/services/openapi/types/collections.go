@@ -52,6 +52,7 @@ type CollectionDetail struct {
 	Name           string        `json:"name"`
 	Image          string        `json:"image"`
 	Creator        string        `json:"creator"`
+	CollectionAddr string        `json:"collection_addr"`
 	Holder         uint64        `json:"holder"`
 	Chain          string        `json:"chain"`
 	Introduce      string        `json:"introduce"`

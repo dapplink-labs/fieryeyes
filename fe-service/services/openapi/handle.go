@@ -285,6 +285,7 @@ func (as *ApiService) GetHotCollectionDetail(c echo.Context) error {
 		Name:           clDatail.Name,
 		Image:          clDatail.CollectionImage,
 		Creator:        clDatail.Creator,
+		CollectionAddr: clDatail.Address,
 		Holder:         clDatail.TotalHolder,
 		Chain:          "Ethereum",
 		Introduce:      clDatail.Introduce,
