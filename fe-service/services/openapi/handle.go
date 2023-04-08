@@ -60,14 +60,18 @@ func (as *ApiService) GetIndex(c echo.Context) error {
 	}
 	// todo head stat
 	headStat := &types.HeadDataStat{
-		TotalNftValue:         "10000",
-		TotalNftValueRatio:    0.95,
-		TotalCollections:      "10000",
-		TotalCollectionsRatio: 0.95,
-		TotalWhale:            "10000",
-		TotalWhaleRatio:       0.95,
-		TotalNft:              "10000",
-		TotalNftRatio:         0.95,
+		TotalNftValue:         "2020022",
+		TotalNftValueRatio:    0.15,
+		TotalNftValueStat:     []float64{2020022, 2010022, 2010022, 2030022, 2000022},
+		TotalCollections:      "40120",
+		TotalCollectionsRatio: 0.25,
+		TotalCollectionsStat:  []float64{10001, 20001, 10001, 20001, 10000},
+		TotalWhale:            "20001",
+		TotalWhaleRatio:       0.35,
+		TotalWhaleStat:        []float64{29001, 21001, 20801, 25001, 22001},
+		TotalNft:              "1033332211",
+		TotalNftRatio:         0.55,
+		TotalNftStat:          []float64{1013332211, 1023332211, 1033332211, 1043332211, 1053332211},
 	}
 	hotCollections, err := collection.GetHotCollectionList(as.Cfg.Database.Db)
 	if err != nil {

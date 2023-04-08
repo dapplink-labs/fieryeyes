@@ -8,14 +8,18 @@ type SupportChain struct {
 }
 
 type HeadDataStat struct {
-	TotalNftValue         string  `json:"total_nft_value"`
-	TotalNftValueRatio    float64 `json:"total_nft_value_ratio"`
-	TotalCollections      string  `json:"total_collections"`
-	TotalCollectionsRatio float64 `json:"total_collections_ratio"`
-	TotalWhale            string  `json:"total_whale"`
-	TotalWhaleRatio       float64 `json:"total_whale_ratio"`
-	TotalNft              string  `json:"total_nft"`
-	TotalNftRatio         float64 `json:"total_nft_ratio"`
+	TotalNftValue         string    `json:"total_nft_value"`
+	TotalNftValueRatio    float64   `json:"total_nft_value_ratio"`
+	TotalNftValueStat     []float64 `json:"total_nft_value_stat"`
+	TotalCollections      string    `json:"total_collections"`
+	TotalCollectionsRatio float64   `json:"total_collections_ratio"`
+	TotalCollectionsStat  []float64 `json:"total_collections_stat"`
+	TotalWhale            string    `json:"total_whale"`
+	TotalWhaleRatio       float64   `json:"total_whale_ratio"`
+	TotalWhaleStat        []float64 `json:"total_whale_stat"`
+	TotalNft              string    `json:"total_nft"`
+	TotalNftRatio         float64   `json:"total_nft_ratio"`
+	TotalNftStat          []float64 `json:"total_nft_stat"`
 }
 
 type Index struct {
