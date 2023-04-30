@@ -17,6 +17,7 @@ func (as *FeScoreService) CalcScores() error {
 		log.Error("GetCollectionList error", err.Error())
 		return err
 	}
+	collectionTurnOverList := getTurnOverRateListFromCollectionList(collectionList)
 	fmt.Println("collectionList Len", len(collectionList))
 	for _, item := range collectionList {
 		fmt.Println("collectionList item", item)
@@ -30,6 +31,12 @@ func (as *FeScoreService) CalcScores() error {
 		fmt.Println("bluceChip", bluceChip)
 
 		// calc Fluidity
+		fluidity, err := calcFluidity(collectionTurnOverList, item.Id)
+		if err != nil {
+			fmt.Println("calcFluidity error", err.Error())
+			continue
+		}
+		fmt.Println("fluidity", fluidity)
 
 		// calc Reliability
 
@@ -50,7 +57,26 @@ func calcBlueChip(totalGiantWhaleHolder uint64, totalHolder uint64) (string, err
 	return fmt.Sprintf("%v", blueChip), nil
 }
 
-func calcFluidity() (string, error) {
+type CollectionTurnOverItem struct {
+	TurnOverRate float64
+	CollectionId uint64
+}
+
+func getTurnOverRateListFromCollectionList(list []models.Collection) []CollectionTurnOverItem {
+	listSize := len(list)
+	turnOverList := []CollectionTurnOverItem{}
+	for _, item := range list {
+		rate := float64(item.TotalTxn) / float64(listSize)
+		turnOverList = append(turnOverList, CollectionTurnOverItem{
+			TurnOverRate: rate,
+			CollectionId: item.Id,
+		})
+	}
+
+	return turnOverList
+}
+
+func calcFluidity(list []CollectionTurnOverItem, collectionId uint64) (string, error) {
 	return "", nil
 }
 
